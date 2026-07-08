@@ -1,0 +1,6 @@
+id: syncthing
+type: application
+name: Syncthing
+container: syncthing
+icon: sync
+url: http://localhost:8384

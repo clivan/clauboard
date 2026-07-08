@@ -1,3 +1,5 @@
 fastapi
 uvicorn
 docker
+pydantic
+pyyaml

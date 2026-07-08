@@ -1,0 +1,39 @@
+id: syncthing
+
+name: Syncthing
+
+description: Continuous file synchronization
+
+image: syncthing/syncthing:latest
+
+container_name: syncthing
+
+restart: unless-stopped
+
+ports:
+
+  - host: 8384
+    container: 8384
+
+  - host: 22000
+    container: 22000
+    protocol: tcp
+
+  - host: 22000
+    container: 22000
+    protocol: udp
+
+volumes:
+
+  - host: ~/Sync
+    container: /var/syncthing
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: syncthing.svg

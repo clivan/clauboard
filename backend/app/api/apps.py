@@ -1,0 +1,1 @@
+from app.services.registry import Registry

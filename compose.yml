@@ -2,22 +2,26 @@ services:
 
   backend:
     build: ./backend
-    container_name: nexus-backend
+    container_name: clauboard-backend
 
     ports:
       - "8000:8000"
 
     volumes:
-      - ./backend/app:/app
+      - ./backend:/workspace
+      - ./plugins:/plugins
       - /var/run/docker.sock:/var/run/docker.sock
 
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
 
   frontend:
     build: ./frontend
-    container_name: nexus-frontend
+    container_name: clauboard-frontend
 
     ports:
       - "8080:80"
-
 

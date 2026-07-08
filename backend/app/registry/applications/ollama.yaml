@@ -1,0 +1,29 @@
+id: ollama
+
+name: Ollama
+
+description: Local LLM runtime
+
+image: ollama/ollama:latest
+
+container_name: ollama
+
+restart: unless-stopped
+
+ports:
+
+  - host: 11434
+    container: 11434
+
+volumes:
+
+  - host: ~/.ollama
+    container: /root/.ollama
+
+environment: {}
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: ollama.svg
