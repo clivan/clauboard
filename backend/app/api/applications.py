@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from app.schemas.project import CreateProjectRequest
 
 from app.managers.application_manager import ApplicationManager
 
@@ -66,3 +67,13 @@ def uninstall(app_id: str):
         raise HTTPException(404)
 
     return {"status": "removed"}
+
+@router.post("/", response_model=Project)
+def create_project(request: CreateProjectRequest):
+    try:
+        return manager.create(request)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e)
+        )

@@ -7,7 +7,9 @@ from app.api.applications import router as application_router
 from app.services.docker_service import DockerService
 from fastapi.middleware.cors import CORSMiddleware
 
-docker = DockerService()
+from app.utils.logger import logger
+
+logger.info("Clauboard iniciado")
 
 app = FastAPI(
     title="Clauboard",

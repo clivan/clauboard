@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from app.models.project import Project
+from backend.app.models.projects import Project
 
 from app.services.workspace_service import WorkspaceService
 from app.services.template_service import TemplateService

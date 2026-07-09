@@ -1,18 +1,36 @@
 from pathlib import Path
 
+
 class WorkspaceService:
 
-    def create(self, path: str):
+    DIRECTORIES = (
+        "compose",
+        "apps",
+        "data",
+        "logs",
+        "backups",
+        "templates",
+        ".clauboard",
+    )
 
-        Path(path).mkdir(
+    def initialize(self, project_path: Path):
+
+        project_path.mkdir(
             parents=True,
             exist_ok=True
         )
 
-    def mkdir(self, path):
+        for directory in self.DIRECTORIES:
 
-        Path(path).mkdir(exist_ok=True)
+            (
+                project_path /
+                directory
+            ).mkdir(exist_ok=True)
 
-    def exists(self, path):
+        readme = project_path / "README.md"
 
-        return Path(path).exists()
+        if not readme.exists():
+
+            readme.write_text(
+                "# Clauboard Project\n"
+            )
