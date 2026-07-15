@@ -1,4 +1,18 @@
+networks:
+  clauboard-net:
+    name: clauboard-net
+
 services:
+
+  proxy:
+    image: nginx:alpine
+    container_name: clauboard-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./proxy/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - clauboard-net
 
   backend:
     build: ./backend
@@ -11,6 +25,9 @@ services:
       - ./backend:/workspace
       - ./plugins:/plugins
       - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - clauboard-net
 
     command: >
       uvicorn app.main:app
@@ -25,3 +42,5 @@ services:
     ports:
       - "8080:80"
 
+    networks:
+      - clauboard-net

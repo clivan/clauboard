@@ -10,6 +10,8 @@ container_name: syncthing
 
 restart: unless-stopped
 
+primary_port: 8384
+
 ports:
 
   - host: 8384
@@ -25,7 +27,7 @@ ports:
 
 volumes:
 
-  - host: ~/Sync
+  - host: /home/claudio/Sync
     container: /var/syncthing
 
 environment:

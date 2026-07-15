@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException
-from app.schemas.project import CreateProjectRequest
 
 from app.managers.application_manager import ApplicationManager
 
@@ -27,7 +26,16 @@ def get_application(app_id: str):
 @router.post("/{app_id}/install")
 def install(app_id: str):
 
-    if not manager.install(app_id):
+    try:
+        installed = manager.install(app_id)
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    except RuntimeError as error:
+        raise HTTPException(status_code=500, detail=str(error))
+
+    if not installed:
         raise HTTPException(404)
 
     return {"status": "installed"}
@@ -67,13 +75,3 @@ def uninstall(app_id: str):
         raise HTTPException(404)
 
     return {"status": "removed"}
-
-@router.post("/", response_model=Project)
-def create_project(request: CreateProjectRequest):
-    try:
-        return manager.create(request)
-    except ValueError as e:
-        raise HTTPException(
-            status_code=409,
-            detail=str(e)
-        )

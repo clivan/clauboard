@@ -1,16 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Clauboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-<h1 id="titulo">Clauboard funcionando</h1>
-
-<div id="status">
-    Loading...
+<div class="topbar">
+    <div class="logo">CLAU<span>BOARD</span></div>
+    <div class="tabs">
+        <button class="tab active" data-view="projects">Proyectos</button>
+        <button class="tab" data-view="applications">Aplicaciones</button>
+    </div>
 </div>
 
-<script>
-console.log(document.body.innerHTML);
-console.log(document.getElementById("status"));
-</script>
+<!-- ===== Proyectos ===== -->
+<section id="view-projects" class="view">
+    <div class="view-header">
+        <h2>Proyectos</h2>
+        <button class="btn primary" id="btn-new-project">+ Nuevo proyecto</button>
+    </div>
 
+    <form id="form-new-project" class="form-panel" hidden>
+        <div class="field">
+            <label for="p-id">ID</label>
+            <input id="p-id" required placeholder="mi-proyecto">
+        </div>
+        <div class="field">
+            <label for="p-name">Nombre</label>
+            <input id="p-name" required placeholder="Mi Proyecto">
+        </div>
+        <div class="field">
+            <label for="p-desc">Descripción</label>
+            <input id="p-desc" placeholder="opcional">
+        </div>
+        <div class="field">
+            <label for="p-template">Template</label>
+            <input id="p-template" required placeholder="grafana">
+        </div>
+        <button type="submit" class="btn primary">Crear</button>
+        <button type="button" class="btn" id="btn-cancel-project">Cancelar</button>
+    </form>
+
+    <div id="projects-grid" class="grid"></div>
+</section>
+
+<!-- ===== Aplicaciones ===== -->
+<section id="view-applications" class="view" hidden>
+    <div class="view-header">
+        <h2>Aplicaciones</h2>
+    </div>
+    <div id="applications-grid" class="grid"></div>
+</section>
+
+<!-- ===== Modal (logs / status) ===== -->
+<div id="modal-backdrop" class="modal-backdrop" hidden>
+    <div class="modal">
+        <div class="modal-header">
+            <span id="modal-title">OUTPUT</span>
+            <button class="btn" id="modal-close">x</button>
+        </div>
+        <pre id="modal-body"></pre>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/application.js"></script>
+<script src="js/project.js"></script>
 <script src="app.js"></script>
 
 </body>
+</html>

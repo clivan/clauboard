@@ -1,0 +1,27 @@
+id: esp32
+
+name: ESP32 DevEnv
+
+description: Entorno de desarrollo ESP-IDF para proyectos ESP32/ESP32-S3
+
+type: toolchain
+
+image: espressif/idf:latest
+
+container_name: esp32-devenv
+
+restart: "no"
+
+devices:
+
+  - /dev/ttyUSB0:/dev/ttyUSB0
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: esp32.svg
