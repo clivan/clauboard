@@ -1,0 +1,23 @@
+id: opencv
+
+name: OpenCV DevEnv
+
+description: Entorno standalone de OpenCV (sin ROS2) para visión por computadora
+
+type: toolchain
+
+image: clauboard/opencv:latest
+
+container_name: opencv-devenv
+
+restart: "no"
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: opencv.svg

@@ -28,6 +28,8 @@ const Api = {
     // ---- Applications ----
     listApplications: () => apiRequest("/applications"),
     listPlugins: () => apiRequest("/plugins"),
+    listTemplates: () => apiRequest("/templates"),
+    listInfrastructure: () => apiRequest("/infrastructure"),
     installApplication: (id) => apiRequest(`/applications/${id}/install`, { method: "POST" }),
     startApplication: (id) => apiRequest(`/applications/${id}/start`, { method: "POST" }),
     stopApplication: (id) => apiRequest(`/applications/${id}/stop`, { method: "POST" }),

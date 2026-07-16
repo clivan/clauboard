@@ -12,6 +12,8 @@
     <div class="tabs">
         <button class="tab active" data-view="projects">Proyectos</button>
         <button class="tab" data-view="applications">Aplicaciones</button>
+        <button class="tab" data-view="templates">Templates</button>
+        <button class="tab" data-view="infrastructure">Infraestructura</button>
     </div>
 </div>
 
@@ -37,7 +39,13 @@
         </div>
         <div class="field">
             <label for="p-template">Template</label>
-            <input id="p-template" required placeholder="grafana">
+            <select id="p-template" required>
+                <option value="">Cargando...</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="p-path">Ruta (opcional)</label>
+            <input id="p-path" placeholder="/projects/mi-proyecto (default si vacío)">
         </div>
         <button type="submit" class="btn primary">Crear</button>
         <button type="button" class="btn" id="btn-cancel-project">Cancelar</button>
@@ -52,6 +60,22 @@
         <h2>Aplicaciones</h2>
     </div>
     <div id="applications-grid" class="grid"></div>
+</section>
+
+<!-- ===== Templates ===== -->
+<section id="view-templates" class="view" hidden>
+    <div class="view-header">
+        <h2>Templates</h2>
+    </div>
+    <div id="templates-grid" class="grid"></div>
+</section>
+
+<!-- ===== Infraestructura ===== -->
+<section id="view-infrastructure" class="view" hidden>
+    <div class="view-header">
+        <h2>Infraestructura</h2>
+    </div>
+    <div id="infrastructure-grid" class="grid"></div>
 </section>
 
 <!-- ===== Modal (logs / status) ===== -->
@@ -69,6 +93,8 @@
 <script src="js/ui.js"></script>
 <script src="js/application.js"></script>
 <script src="js/project.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/infrastructure.js"></script>
 <script src="app.js"></script>
 
 </body>

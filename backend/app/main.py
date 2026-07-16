@@ -5,6 +5,8 @@ from app.api.plugins import router as plugin_router
 from app.api.applications import router as application_router
 from app.api.projects import router as projects_router
 from app.api.agents import router as agents_router
+from app.api.templates import router as templates_router
+from app.api.infrastructure import router as infrastructure_router
 
 from app.services.docker_service import DockerService
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,3 +44,5 @@ app.include_router(plugin_router)
 app.include_router(application_router)
 app.include_router(projects_router)
 app.include_router(agents_router)
+app.include_router(templates_router)
+app.include_router(infrastructure_router)

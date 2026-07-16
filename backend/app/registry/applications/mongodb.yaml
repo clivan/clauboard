@@ -1,0 +1,7 @@
+id: mongodb
+name: MongoDB
+description: Base de datos documental compartida
+type: infrastructure
+image: mongo:7
+container_name: clauboard-mongodb
+restart: unless-stopped

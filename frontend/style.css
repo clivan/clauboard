@@ -146,7 +146,7 @@ body {
 
 .card-title { font-size: 0.95rem; color: var(--text); }
 .card-id { font-size: 0.7rem; color: var(--text-muted); }
-.card-desc { font-size: 0.78rem; color: var(--text-muted); margin: 8px 0 14px; line-height: 1.5; }
+.card-desc { font-size: 0.78rem; color: var(--text-muted); margin: 8px 0 14px; line-height: 1.5; white-space: pre-line; }
 
 .status {
     display: inline-flex;
@@ -198,7 +198,7 @@ body {
 .field { display: flex; flex-direction: column; gap: 4px; }
 .field label { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
-.field input {
+.field input, .field select {
     background: var(--bg);
     border: 1px solid var(--panel-border);
     color: var(--text);
@@ -207,7 +207,7 @@ body {
     font-size: 0.82rem;
 }
 
-.field input:focus { outline: none; border-color: var(--cyan); }
+.field input:focus, .field select:focus { outline: none; border-color: var(--cyan); }
 
 /* ---------- Log / status modal ---------- */
 

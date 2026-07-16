@@ -1,0 +1,35 @@
+id: flowise
+
+name: Flowise
+
+description: Constructor visual de flujos LLM/agentes (low-code)
+
+type: service
+
+image: flowiseai/flowise:latest
+
+container_name: flowise
+
+restart: unless-stopped
+
+primary_port: 3000
+
+ports:
+
+  - host: 3002
+    container: 3000
+
+volumes:
+
+  - host: /home/claudio/clauboard-data/flowise
+    container: /root/.flowise
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: flowise.svg

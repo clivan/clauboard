@@ -1,0 +1,33 @@
+id: avr
+
+name: AVR DevEnv
+
+description: >
+  Toolchain para microcontroladores AVR (ATmega/ATtiny). Incluye
+  avr-gcc, avr-as (ensamblador, vía binutils-avr) y avrdude, para
+  combinar C/C++ con ensamblador inline o módulos .S.
+
+type: toolchain
+
+image: lpodkalicki/avr-toolchain:latest
+
+container_name: avr-devenv
+
+restart: "no"
+
+# NOTA: el programador USBasp/USBtinyISP se presenta como dispositivo
+# USB genérico (no serial), no como /dev/ttyUSBx. En ese caso 'devices'
+# no basta y hace falta privileged: true. Si en cambio tu placa usa un
+# bootloader serie (ej. Arduino-compatible), cambia esto por
+# devices: ["/dev/ttyUSB0:/dev/ttyUSB0"] y quita privileged.
+privileged: true
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: avr.svg

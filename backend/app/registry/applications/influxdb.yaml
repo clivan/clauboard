@@ -1,0 +1,8 @@
+id: influxdb
+name: InfluxDB
+description: Series de tiempo compartidas (telemetría)
+type: infrastructure
+image: influxdb:2
+container_name: clauboard-influxdb
+restart: unless-stopped
+primary_port: 8086

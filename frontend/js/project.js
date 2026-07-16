@@ -89,18 +89,52 @@ async function deleteProject(id) {
     }
 }
 
+async function populateTemplateSelect() {
+
+    const select = document.getElementById("p-template");
+    select.innerHTML = "";
+
+    let templates = [];
+
+    try {
+        templates = await Api.listTemplates();
+    } catch (error) {
+        select.innerHTML = `<option value="">Error cargando templates</option>`;
+        return;
+    }
+
+    if (!templates || templates.length === 0) {
+        select.innerHTML = `<option value="">No hay templates registrados</option>`;
+        return;
+    }
+
+    for (const tpl of templates) {
+
+        const option = document.createElement("option");
+        option.value = tpl.id;
+        option.textContent = tpl.name || tpl.id;
+        select.appendChild(option);
+    }
+}
+
 function initProjectForm() {
 
     const form = document.getElementById("form-new-project");
     const openBtn = document.getElementById("btn-new-project");
     const cancelBtn = document.getElementById("btn-cancel-project");
 
-    openBtn.addEventListener("click", () => { form.hidden = false; });
+    openBtn.addEventListener("click", () => {
+        form.hidden = false;
+        populateTemplateSelect();
+    });
+
     cancelBtn.addEventListener("click", () => { form.hidden = true; form.reset(); });
 
     form.addEventListener("submit", async (event) => {
 
         event.preventDefault();
+
+        const path = document.getElementById("p-path").value.trim();
 
         const payload = {
             id: document.getElementById("p-id").value.trim(),
@@ -108,6 +142,8 @@ function initProjectForm() {
             description: document.getElementById("p-desc").value.trim(),
             template: document.getElementById("p-template").value.trim(),
         };
+
+        if (path) payload.path = path;
 
         try {
             await Api.createProject(payload);

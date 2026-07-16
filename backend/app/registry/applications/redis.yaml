@@ -1,0 +1,7 @@
+id: redis
+name: Redis
+description: Cache / pub-sub compartido
+type: infrastructure
+image: redis:7-alpine
+container_name: clauboard-redis
+restart: unless-stopped

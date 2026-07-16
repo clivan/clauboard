@@ -1,0 +1,8 @@
+id: grafana
+name: Grafana
+description: Visualización de métricas (pareja de InfluxDB)
+type: infrastructure
+image: grafana/grafana:latest
+container_name: clauboard-grafana
+restart: unless-stopped
+primary_port: 3000

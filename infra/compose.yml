@@ -1,0 +1,139 @@
+# Infraestructura compartida (bases de datos). Vive INDEPENDIENTE
+# del stack de Clauboard (proxy/backend/frontend) — así un
+# `docker compose down` del dashboard no tumba tus datos.
+#
+# Requiere que la red clauboard-net ya exista (la crea el compose.yml
+# principal). Arranca ese primero, o al menos una vez para que la red
+# quede creada, antes de levantar este.
+
+networks:
+  clauboard-net:
+    external: true
+
+volumes:
+  clauboard-postgres-data:
+    name: clauboard-postgres-data
+  clauboard-mongodb-data:
+    name: clauboard-mongodb-data
+  clauboard-influxdb-data:
+    name: clauboard-influxdb-data
+  clauboard-influxdb-config:
+    name: clauboard-influxdb-config
+  clauboard-redis-data:
+    name: clauboard-redis-data
+  clauboard-minio-data:
+    name: clauboard-minio-data
+  clauboard-mosquitto-data:
+    name: clauboard-mosquitto-data
+  clauboard-grafana-data:
+    name: clauboard-grafana-data
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: clauboard-postgres
+    restart: unless-stopped
+
+    environment:
+      - POSTGRES_USER=${POSTGRES_ADMIN_USER:-clauboard_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_ADMIN_PASSWORD:?define POSTGRES_ADMIN_PASSWORD en .env}
+
+    volumes:
+      - clauboard-postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+
+    networks:
+      - clauboard-net
+
+  mongodb:
+    image: mongo:7
+    container_name: clauboard-mongodb
+    restart: unless-stopped
+
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ADMIN_USER:-clauboard_admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ADMIN_PASSWORD:?define MONGO_ADMIN_PASSWORD en .env}
+
+    volumes:
+      - clauboard-mongodb-data:/data/db
+
+    networks:
+      - clauboard-net
+
+  influxdb:
+    image: influxdb:2
+    container_name: clauboard-influxdb
+    restart: unless-stopped
+
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_ADMIN_USER:-clauboard_admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:?define INFLUXDB_ADMIN_PASSWORD en .env}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG:-clauboard}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET:-default}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN:?define INFLUXDB_ADMIN_TOKEN en .env}
+
+    volumes:
+      - clauboard-influxdb-data:/var/lib/influxdb2
+      - clauboard-influxdb-config:/etc/influxdb2
+
+    networks:
+      - clauboard-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: clauboard-redis
+    restart: unless-stopped
+
+    command: redis-server --requirepass ${REDIS_PASSWORD:?define REDIS_PASSWORD en .env}
+
+    volumes:
+      - clauboard-redis-data:/data
+
+    networks:
+      - clauboard-net
+
+  minio:
+    image: minio/minio:latest
+    container_name: clauboard-minio
+    restart: unless-stopped
+
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-clauboard_admin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:?define MINIO_ROOT_PASSWORD en .env}
+
+    command: server /data --console-address ":9001"
+
+    volumes:
+      - clauboard-minio-data:/data
+
+    networks:
+      - clauboard-net
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: clauboard-mosquitto
+    restart: unless-stopped
+
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - clauboard-mosquitto-data:/mosquitto/data
+
+    networks:
+      - clauboard-net
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: clauboard-grafana
+    restart: unless-stopped
+
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-clauboard_admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?define GRAFANA_ADMIN_PASSWORD en .env}
+
+    volumes:
+      - clauboard-grafana-data:/var/lib/grafana
+
+    networks:
+      - clauboard-net

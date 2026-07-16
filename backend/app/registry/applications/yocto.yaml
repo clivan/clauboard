@@ -1,0 +1,38 @@
+id: yocto
+
+name: Yocto DevEnv
+
+description: >
+  Entorno CROPS/Poky para builds de Yocto Project. Los builds tardan
+  horas, así que el volumen de cache DEBE sobrevivir entre corridas
+  (ver nota de volumes abajo).
+
+type: toolchain
+
+image: crops/poky:ubuntu-22.04
+
+container_name: yocto-devenv
+
+restart: "no"
+
+# IMPORTANTE (limitación conocida, pendiente de resolver):
+# esta ruta es estática en el registry, pero cada proyecto Yocto
+# necesita SU PROPIO directorio de build persistente (downloads/,
+# sstate-cache/, tmp/). Con el esquema actual, dos proyectos que
+# instalen este mismo template chocarían en la misma ruta del host.
+# Por ahora, ajusta 'host' manualmente por proyecto antes de instalar,
+# hasta que exista soporte de variables de plantilla por proyecto.
+volumes:
+
+  - host: /home/claudio/yocto-builds/default
+    container: /workdir
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: yocto.svg

@@ -1,0 +1,33 @@
+id: msp430
+
+name: MSP430 DevEnv
+
+description: >
+  Toolchain para microcontroladores MSP430 (LaunchPad). Incluye
+  msp430-elf-gcc y su ensamblador (msp430-elf-as), para combinar
+  C/C++ con ensamblador.
+
+type: toolchain
+
+image: cdelledonne/msp430-gcc:latest
+
+container_name: msp430-devenv
+
+restart: "no"
+
+# El debugger eZ-FET/FET integrado del LaunchPad normalmente
+# enumera como /dev/ttyACM0. Verifica con `ls /dev/ttyACM*`
+# tras conectar la placa y ajusta si es distinto.
+devices:
+
+  - /dev/ttyACM0:/dev/ttyACM0
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: msp430.svg

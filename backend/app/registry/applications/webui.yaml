@@ -1,0 +1,39 @@
+id: webui
+
+name: Open WebUI
+
+description: >
+  Interfaz web para modelos LLM vía Ollama. Requiere que Ollama esté
+  corriendo (container_name: ollama) en la misma red clauboard-net.
+
+type: service
+
+image: ghcr.io/open-webui/open-webui:main
+
+container_name: open-webui
+
+restart: unless-stopped
+
+primary_port: 8080
+
+ports:
+
+  - host: 3001
+    container: 8080
+
+volumes:
+
+  - host: /home/claudio/clauboard-data/open-webui
+    container: /app/backend/data
+
+environment:
+
+  # 'ollama' es el container_name declarado en ollama.yaml —
+  # se resuelve por DNS embebido de Docker dentro de clauboard-net.
+  OLLAMA_BASE_URL: "http://ollama:11434"
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: openwebui.svg

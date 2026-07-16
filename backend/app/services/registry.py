@@ -3,6 +3,7 @@ from pathlib import Path
 import yaml
 
 from app.models.application import Application
+from app.utils.logger import logger
 
 
 class Registry:
@@ -16,7 +17,7 @@ class Registry:
             / "applications"
         )
 
-    def list_applications(self):
+    def list_applications(self, type_filter=None):
 
         apps = []
 
@@ -26,7 +27,23 @@ class Registry:
 
                 data = yaml.safe_load(f)
 
-            apps.append(Application(**data))
+            if not data:
+                # Archivo vacío o mal formado: se ignora en vez de
+                # tumbar el listado completo de aplicaciones.
+                logger.warning(f"[registry] omitiendo {file.name}: vacío o inválido")
+                continue
+
+            try:
+                app = Application(**data)
+
+            except Exception as error:
+                logger.warning(f"[registry] omitiendo {file.name}: {error}")
+                continue
+
+            if type_filter is not None and app.type != type_filter:
+                continue
+
+            apps.append(app)
 
         return apps
 

@@ -1,10 +1,12 @@
 from pathlib import Path
 import shutil
 
+from app.config import TEMPLATES_DIR
+
 
 class TemplateService:
 
-    def __init__(self, templates_path: str = "templates"):
+    def __init__(self, templates_path: Path = TEMPLATES_DIR):
         self.templates_path = Path(templates_path)
 
     def list(self):

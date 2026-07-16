@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.managers.application_manager import ApplicationManager
+from app.models.application_type import ApplicationType
 
 router = APIRouter(prefix="/applications", tags=["Applications"])
 
@@ -10,7 +11,7 @@ manager = ApplicationManager()
 @router.get("")
 def list_applications():
 
-    return manager.list()
+    return manager.list(type_filter=ApplicationType.SERVICE)
 
 
 @router.get("/{app_id}")
@@ -22,6 +23,7 @@ def get_application(app_id: str):
         raise HTTPException(404, "Application not found")
 
     return app
+
 
 @router.post("/{app_id}/install")
 def install(app_id: str):
@@ -44,7 +46,13 @@ def install(app_id: str):
 @router.post("/{app_id}/start")
 def start(app_id: str):
 
-    if not manager.start(app_id):
+    try:
+        started = manager.start(app_id)
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    if not started:
         raise HTTPException(404)
 
     return {"status": "running"}
@@ -53,7 +61,13 @@ def start(app_id: str):
 @router.post("/{app_id}/stop")
 def stop(app_id: str):
 
-    if not manager.stop(app_id):
+    try:
+        stopped = manager.stop(app_id)
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    if not stopped:
         raise HTTPException(404)
 
     return {"status": "stopped"}
@@ -62,7 +76,13 @@ def stop(app_id: str):
 @router.post("/{app_id}/restart")
 def restart(app_id: str):
 
-    if not manager.restart(app_id):
+    try:
+        restarted = manager.restart(app_id)
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    if not restarted:
         raise HTTPException(404)
 
     return {"status": "restarted"}
@@ -71,7 +91,13 @@ def restart(app_id: str):
 @router.delete("/{app_id}")
 def uninstall(app_id: str):
 
-    if not manager.uninstall(app_id):
+    try:
+        removed = manager.uninstall(app_id)
+
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    if not removed:
         raise HTTPException(404)
 
     return {"status": "removed"}

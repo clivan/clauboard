@@ -1,0 +1,33 @@
+id: espconnect
+
+name: ESPConnect
+
+description: >
+  Dashboard web para gestionar/flashear ESP32/ESP8266. Usa Web
+  Serial/WebUSB DESDE EL NAVEGADOR — el contenedor solo sirve la
+  página estática, no necesita passthrough de dispositivos. Requiere
+  Chrome/Edge/Brave/Arc (Chromium) 89+; Firefox/Safari no soportan
+  Web Serial.
+
+type: service
+
+image: crenovated/espconnect:latest
+
+container_name: espconnect
+
+restart: unless-stopped
+
+primary_port: 80
+
+ports:
+
+  - host: 8090
+    container: 80
+
+environment: {}
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: espconnect.svg

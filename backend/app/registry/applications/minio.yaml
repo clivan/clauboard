@@ -1,0 +1,8 @@
+id: minio
+name: MinIO
+description: Almacenamiento de objetos (rosbags, firmware, modelos)
+type: infrastructure
+image: minio/minio:latest
+container_name: clauboard-minio
+restart: unless-stopped
+primary_port: 9001

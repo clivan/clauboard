@@ -9,6 +9,7 @@ from app.services.template_service import TemplateService
 from app.services.manifest_service import ManifestService
 from app.services.git_service import GitService
 from app.services.docker_compose_service import DockerComposeService
+from app.services.env_service import EnvService
 
 
 class ProjectManager:
@@ -27,6 +28,7 @@ class ProjectManager:
         self.git = GitService()
         self.manifest = ManifestService()
         self.compose = DockerComposeService()
+        self.env = EnvService()
 
     def list(self) -> list[Project]:
 
@@ -43,7 +45,20 @@ class ProjectManager:
                 f"Project '{request.id}' already exists."
             )
 
-        project_path = PROJECTS_DIR / request.id
+        project_path = (
+            Path(request.path) if request.path
+            else PROJECTS_DIR / request.id
+        )
+
+        try:
+            project_path.resolve().relative_to(PROJECTS_DIR.resolve())
+        except ValueError:
+            raise ValueError(
+                f"'{project_path}' está fuera de {PROJECTS_DIR}: el "
+                "backend solo puede escribir dentro de la carpeta de "
+                "proyectos montada (variable CLAUBOARD_PROJECTS_DIR "
+                "en tu .env del compose principal)."
+            )
 
         project = Project(
             id=request.id,
@@ -59,6 +74,10 @@ class ProjectManager:
         # Copiar template si existe
         if self.templates.exists(request.template):
             self.templates.apply(request.template, str(project_path))
+
+        # Generar .env compose-compatible (CLAVE=VALOR) con los
+        # valores que el compose.yml del template espera.
+        self.env.save(project_path, project.id, request.template)
 
         # Inicializar Git
         self.git.init(str(project_path))

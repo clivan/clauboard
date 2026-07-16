@@ -1,0 +1,30 @@
+id: stm32
+
+name: STM32 DevEnv
+
+description: >
+  Toolchain ARM Cortex-M para STM32. Incluye arm-none-eabi-gcc/as
+  y st-link para flashear/depurar vía ST-Link.
+
+type: toolchain
+
+image: lpodkalicki/stm32-toolchain:latest
+
+container_name: stm32-devenv
+
+restart: "no"
+
+# El ST-Link es un dispositivo USB (no serial); su bus/device number
+# cambia cada vez que se reconecta, así que un 'devices' fijo no es
+# confiable. Se usa privileged para acceso USB genérico.
+privileged: true
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: stm32.svg
