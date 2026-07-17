@@ -1,0 +1,20 @@
+id: mongo-express
+name: Mongo Express
+description: Cliente web para MongoDB (compañero de MongoDB)
+type: service
+image: mongo-express:latest
+container_name: mongo-express
+restart: unless-stopped
+primary_port: 8081
+ports:
+  - host: 8084
+    container: 8081
+environment:
+  # Ajusta estos dos con las credenciales reales de infra/.env
+  # (ME_CONFIG_MONGODB_ADMINUSERNAME/PASSWORD, no MONGO_ADMIN_*)
+  ME_CONFIG_MONGODB_SERVER: clauboard-mongodb
+  ME_CONFIG_MONGODB_ADMINUSERNAME: "cambia-esto"
+  ME_CONFIG_MONGODB_ADMINPASSWORD: "cambia-esto"
+labels:
+  clauboard.managed: "true"
+icon: mongoexpress.svg

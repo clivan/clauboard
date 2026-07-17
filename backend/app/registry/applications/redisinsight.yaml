@@ -1,0 +1,14 @@
+id: redisinsight
+name: RedisInsight
+description: Cliente web para Redis (compañero de Redis)
+type: service
+image: redis/redisinsight:latest
+container_name: redisinsight
+restart: unless-stopped
+primary_port: 5540
+ports:
+  - host: 5540
+    container: 5540
+labels:
+  clauboard.managed: "true"
+icon: redisinsight.svg

@@ -1,0 +1,35 @@
+id: node-red
+
+name: Node-RED
+
+description: Programación por flujos, automatización y prototipado rápido
+
+type: service
+
+image: nodered/node-red:latest
+
+container_name: node-red
+
+restart: unless-stopped
+
+primary_port: 1880
+
+ports:
+
+  - host: 1880
+    container: 1880
+
+volumes:
+
+  - host: /home/claudio/clauboard-data/node-red
+    container: /data
+
+environment:
+
+  TZ: America/Mexico_City
+
+labels:
+
+  clauboard.managed: "true"
+
+icon: nodered.svg
