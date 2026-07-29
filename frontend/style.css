@@ -166,6 +166,8 @@ body {
 
 .status.running .led { background: var(--success); box-shadow: 0 0 6px var(--success); animation: pulse 1.6s infinite; }
 .status.stopped .led { background: var(--warning); }
+.status.partial .led { background: var(--warning); box-shadow: 0 0 6px var(--warning); animation: pulse 1.6s infinite; }
+.status.no_compose .led { background: var(--text-muted); }
 .status.not_installed .led, .status.unknown .led { background: var(--text-muted); }
 
 @keyframes pulse {

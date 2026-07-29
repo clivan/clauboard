@@ -50,4 +50,10 @@ const Api = {
     composeRestart: (id) => apiRequest(`/projects/${id}/compose/restart`, { method: "POST" }),
     composeLogs: (id, tail = 200) => apiRequest(`/projects/${id}/compose/logs?tail=${tail}`),
     composeStatus: (id) => apiRequest(`/projects/${id}/compose/status`),
+    composeRunCommand: (id) => apiRequest(`/projects/${id}/compose/run`),
+    stackStatus: (id) => apiRequest(`/projects/${id}/stack-status`),
+    cloneProject: (id, payload) => apiRequest(`/projects/${id}/clone`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+    }),
 };

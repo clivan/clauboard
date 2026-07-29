@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 class Project(BaseModel):
 
+    model_config = {"json_encoders": {datetime: lambda v: v.isoformat()}}
+
     id: str
     name: str
     description: str = ""

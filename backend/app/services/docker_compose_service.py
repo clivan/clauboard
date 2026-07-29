@@ -19,8 +19,11 @@ class DockerComposeService:
         capture: bool = False,
     ) -> str | None:
 
+        env_file = compose_file.parent.parent / ".env"
+
         command = [
             "docker", "compose",
+            *(["--env-file", str(env_file)] if env_file.exists() else []),
             "-f", str(compose_file),
             "-p", project_name,
             *args,
@@ -51,6 +54,21 @@ class DockerComposeService:
 
         self._run(["up", "-d"], compose_file, project_name)
 
+    def run(self, compose_file: Path, project_name: str, service: str) -> str:
+        """
+        Equivalente a `docker compose run --rm <service>`.
+        No bloquea — retorna el comando completo para que el usuario
+        lo corra en su propia terminal (no abre un TTY desde la API).
+        """
+
+        return (
+            f"docker compose "
+            f"--env-file {compose_file.parent.parent / '.env'} "
+            f"-f {compose_file} "
+            f"-p {project_name} "
+            f"run --rm {service}"
+        )
+
     def down(self, compose_file: Path, project_name: str):
 
         self._run(["down"], compose_file, project_name)
@@ -59,7 +77,7 @@ class DockerComposeService:
 
         self._run(["restart"], compose_file, project_name)
 
-    def logs(   
+    def logs(
         self,
         compose_file: Path,
         project_name: str,

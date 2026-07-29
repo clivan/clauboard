@@ -1,4 +1,5 @@
 import json
+import shutil
 
 from pathlib import Path
 
@@ -68,7 +69,7 @@ class ProjectRepository:
         with open(project_file, "w") as file:
 
             json.dump(
-                project.model_dump(),
+                project.model_dump(mode="json"),
                 file,
                 indent=4
             )
@@ -80,7 +81,4 @@ class ProjectRepository:
         if not directory.exists():
             return
 
-        for file in directory.iterdir():
-            file.unlink()
-
-        directory.rmdir()
+        shutil.rmtree(directory)

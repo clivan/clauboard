@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     initProjectForm();
+    initCloneModal();
 
     // Vista inicial
     loadProjects();

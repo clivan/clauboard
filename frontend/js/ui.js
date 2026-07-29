@@ -73,10 +73,24 @@ function toast(message, type = "ok") {
     setTimeout(() => node.remove(), 3500);
 }
 
-function showModal(title, content) {
+function showModal(title, content, copyable = false) {
 
     document.getElementById("modal-title").textContent = title;
     document.getElementById("modal-body").textContent = content;
+
+    const copyBtn = document.getElementById("modal-copy");
+
+    if (copyable) {
+        copyBtn.hidden = false;
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(content).then(() => {
+                toast("Comando copiado al portapapeles", "ok");
+            });
+        };
+    } else {
+        copyBtn.hidden = true;
+    }
+
     document.getElementById("modal-backdrop").hidden = false;
 }
 

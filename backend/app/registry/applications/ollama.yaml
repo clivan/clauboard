@@ -17,7 +17,7 @@ ports:
 
 volumes:
 
-  - host: ~/.ollama
+  - host: /home/claudio/clauboard-data/ollama
     container: /root/.ollama
 
 environment: {}

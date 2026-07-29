@@ -69,7 +69,7 @@ class ProjectManager:
         )
 
         # Crear estructura del workspace
-        self.workspace.initialize(project_path)
+        self.workspace.initialize(project_path, request.template)
 
         # Copiar template si existe
         if self.templates.exists(request.template):
@@ -77,7 +77,7 @@ class ProjectManager:
 
         # Generar .env compose-compatible (CLAVE=VALOR) con los
         # valores que el compose.yml del template espera.
-        self.env.save(project_path, project.id, request.template)
+        self.env.save(project_path, project.id, request.template, request.device)
 
         # Inicializar Git
         self.git.init(str(project_path))
@@ -93,6 +93,46 @@ class ProjectManager:
     def delete(self, project_id: str):
 
         self.repository.delete(project_id)
+
+    def clone(self, source_id: str, new_id: str, new_name: str, new_path: str | None = None) -> Project:
+
+        source = self._get_or_raise(source_id)
+
+        if self.repository.get(new_id) is not None:
+            raise ValueError(f"Ya existe un proyecto con id '{new_id}'")
+
+        dest_path = (
+            Path(new_path) if new_path
+            else PROJECTS_DIR / new_id
+        )
+
+        try:
+            dest_path.resolve().relative_to(PROJECTS_DIR.resolve())
+        except ValueError:
+            raise ValueError(
+                f"'{dest_path}' está fuera de {PROJECTS_DIR}"
+            )
+
+        import shutil
+        shutil.copytree(Path(source.path), dest_path)
+
+        # Actualizar project.json con los nuevos datos
+        cloned = Project(
+            id=new_id,
+            name=new_name,
+            description=source.description,
+            template=source.template,
+            path=str(dest_path),
+            version=source.version,
+            tags=list(source.tags),
+        )
+
+        self.repository.save(cloned)
+
+        # Reinicializar git en el clon (no copiar el historial del original)
+        self.git.init(str(dest_path))
+
+        return cloned
 
     def _compose_file(self, project: Project) -> Path:
 
@@ -117,6 +157,24 @@ class ProjectManager:
             raise ValueError(f"Project '{project_id}' not found")
 
         return project
+
+    def run_stack(self, project_id: str) -> str:
+        """
+        Genera el comando `docker compose run --rm` para ejecutar el
+        toolchain del proyecto en una terminal local. No abre un TTY
+        desde la API — retorna el comando para que el usuario lo copie
+        y pegue en su propia terminal.
+        """
+
+        project = self._get_or_raise(project_id)
+
+        compose_file = self._compose_file(project)
+
+        return self.compose.run(
+            compose_file,
+            project.id,
+            project.template,
+        )
 
     def start_stack(self, project_id: str):
 

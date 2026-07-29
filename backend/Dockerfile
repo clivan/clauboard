@@ -2,13 +2,13 @@ FROM python:3.12-slim
 
 WORKDIR /workspace
 
-# Docker CLI + compose plugin (necesario para DockerComposeService,
-# se conecta al daemon del host vía /var/run/docker.sock montado)
+# Docker CLI + compose plugin + git
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
-        gnupg && \
+        gnupg \
+        git && \
     install -m 0755 -d /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg \
         -o /etc/apt/keyrings/docker.asc && \

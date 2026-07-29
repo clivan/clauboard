@@ -45,7 +45,7 @@
         </div>
         <div class="field">
             <label for="p-path">Ruta (opcional)</label>
-            <input id="p-path" placeholder="/projects/mi-proyecto (default si vacío)">
+            <input id="p-path" placeholder="dejar vacío para usar el default">
         </div>
         <button type="submit" class="btn primary">Crear</button>
         <button type="button" class="btn" id="btn-cancel-project">Cancelar</button>
@@ -78,12 +78,43 @@
     <div id="infrastructure-grid" class="grid"></div>
 </section>
 
+<!-- ===== Modal clone ===== -->
+<div id="clone-backdrop" class="modal-backdrop" hidden>
+    <div class="modal">
+        <div class="modal-header">
+            <span id="clone-title">CLONAR PROYECTO</span>
+            <button class="btn" id="clone-close">✕</button>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+            <div class="field">
+                <label for="clone-id">Nuevo ID</label>
+                <input id="clone-id" placeholder="mi-proyecto-v2">
+            </div>
+            <div class="field">
+                <label for="clone-name">Nuevo nombre</label>
+                <input id="clone-name" placeholder="Mi Proyecto v2">
+            </div>
+            <div class="field">
+                <label for="clone-path">Ruta (opcional)</label>
+                <input id="clone-path" placeholder="dejar vacío para usar el default">
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="btn" id="clone-cancel">Cancelar</button>
+                <button class="btn primary" id="clone-confirm">Clonar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ===== Modal (logs / status) ===== -->
 <div id="modal-backdrop" class="modal-backdrop" hidden>
     <div class="modal">
         <div class="modal-header">
             <span id="modal-title">OUTPUT</span>
-            <button class="btn" id="modal-close">x</button>
+            <div style="display:flex;gap:8px;">
+                <button class="btn" id="modal-copy" hidden>Copiar</button>
+                <button class="btn" id="modal-close">✕</button>
+            </div>
         </div>
         <pre id="modal-body"></pre>
     </div>
