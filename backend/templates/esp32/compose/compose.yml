@@ -1,0 +1,11 @@
+services:
+  esp32:
+    image: espressif/idf:latest
+    container_name: ${PROJECT_NAME}-esp32
+    devices:
+      - ${DEVICE}:${DEVICE}
+    volumes:
+      - ../src:/workspace/src
+    working_dir: /workspace/src
+    stdin_open: true
+    tty: true

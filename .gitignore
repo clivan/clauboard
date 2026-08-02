@@ -12,7 +12,9 @@ __pycache__/
 
 projects/
 
-templates/
+# Ignora carpetas templates/ dentro de proyectos creados, pero NO
+# los templates del backend (backend/templates/)
+clauboard-projects/*/templates/
 
 plugins/
 

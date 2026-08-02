@@ -1,0 +1,10 @@
+services:
+  avr:
+    image: lpodkalicki/avr-toolchain:latest
+    container_name: ${PROJECT_NAME}-avr
+    privileged: true
+    volumes:
+      - ../src:/workspace/src
+    working_dir: /workspace/src
+    stdin_open: true
+    tty: true

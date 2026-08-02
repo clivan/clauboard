@@ -1,0 +1,10 @@
+services:
+  stm32:
+    image: lpodkalicki/stm32-toolchain:latest
+    container_name: ${PROJECT_NAME}-stm32
+    privileged: true
+    volumes:
+      - ../src:/workspace/src
+    working_dir: /workspace/src
+    stdin_open: true
+    tty: true

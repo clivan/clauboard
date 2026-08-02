@@ -1,0 +1,9 @@
+services:
+  opencv:
+    image: clauboard/opencv:latest
+    container_name: ${PROJECT_NAME}-opencv
+    volumes:
+      - ../src:/workspace/src
+    working_dir: /workspace/src
+    stdin_open: true
+    tty: true

@@ -71,7 +71,7 @@ class DockerComposeService:
 
     def down(self, compose_file: Path, project_name: str):
 
-        self._run(["down"], compose_file, project_name)
+        self._run(["down", "--timeout", "3"], compose_file, project_name)
 
     def restart(self, compose_file: Path, project_name: str):
 

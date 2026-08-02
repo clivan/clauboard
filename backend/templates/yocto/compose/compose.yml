@@ -1,0 +1,9 @@
+services:
+  yocto:
+    image: crops/poky:ubuntu-22.04
+    container_name: ${PROJECT_NAME}-yocto
+    volumes:
+      - ../build:/workdir
+    working_dir: /workdir
+    stdin_open: true
+    tty: true
