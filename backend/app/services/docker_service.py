@@ -113,3 +113,39 @@ class DockerService:
 
         except docker.errors.APIError as error:
             raise RuntimeError(str(error))
+
+    def pull_progress(self, image: str):
+        """
+        Genera eventos de progreso del pull de una imagen.
+        Cada yield es un dict con: status, layer, progress, percent (0-100).
+        """
+
+        layers = {}
+
+        try:
+            for event in self.client.api.pull(image, stream=True, decode=True):
+
+                status  = event.get("status", "")
+                layer   = event.get("id", "")
+                detail  = event.get("progressDetail", {})
+                current = detail.get("current", 0)
+                total   = detail.get("total", 0)
+
+                if layer and total:
+                    layers[layer] = (current, total)
+
+                # Calcula porcentaje global sobre todas las capas conocidas
+                total_bytes   = sum(t for _, t in layers.values())
+                current_bytes = sum(c for c, _ in layers.values())
+
+                percent = int(current_bytes * 100 / total_bytes) if total_bytes else 0
+
+                yield {
+                    "status":   status,
+                    "layer":    layer,
+                    "progress": f"{current_bytes // 1024 // 1024} MB / {total_bytes // 1024 // 1024} MB",
+                    "percent":  percent,
+                }
+
+        except docker.errors.APIError as error:
+            yield {"status": "error", "layer": "", "progress": str(error), "percent": 0}

@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
+import json
 
 from app.managers.application_manager import ApplicationManager
 from app.models.application_type import ApplicationType
@@ -6,6 +8,55 @@ from app.models.application_type import ApplicationType
 router = APIRouter(prefix="/applications", tags=["Applications"])
 
 manager = ApplicationManager()
+
+
+@router.get("")
+def list_applications():
+
+    return manager.list(type_filter=ApplicationType.SERVICE)
+
+
+@router.get("/{app_id}")
+def get_application(app_id: str):
+
+    app = manager.get(app_id)
+
+    if app is None:
+        raise HTTPException(404, "Application not found")
+
+    return app
+
+
+@router.get("/{app_id}/install/progress")
+def install_progress(app_id: str):
+    """
+    SSE stream con el progreso del pull de la imagen.
+    El cliente abre un EventSource a este endpoint antes de llamar
+    a POST /install — recibe eventos mientras Docker descarga las capas.
+    """
+
+    app = manager.registry.get_application(app_id)
+
+    if app is None:
+        raise HTTPException(404, "Application not found")
+
+    def event_stream():
+
+        for event in manager.docker.pull_progress(app.image):
+
+            data = json.dumps(event)
+            yield f"data: {data}\n\n"
+
+        yield "data: {\"status\": \"done\", \"percent\": 100}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        }
+    )
 
 
 @router.get("")

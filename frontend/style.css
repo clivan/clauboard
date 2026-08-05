@@ -274,3 +274,50 @@ body {
 
 .toast.error { border-color: var(--magenta); color: var(--magenta); }
 .toast.ok { border-color: var(--success); color: var(--success); }
+/* ---------- Barra de progreso de instalación ---------- */
+
+.install-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--panel);
+    border-top: 1px solid var(--panel-border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 15;
+    font-size: 0.75rem;
+}
+
+.install-bar[hidden] { display: none; }
+
+.install-bar-label {
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    min-width: 180px;
+}
+
+.install-bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--panel-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.install-bar-fill {
+    height: 100%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.install-bar-pct {
+    color: var(--text-muted);
+    min-width: 40px;
+    text-align: right;
+}

@@ -44,6 +44,10 @@
             </select>
         </div>
         <div class="field">
+            <label for="p-device">Dispositivo (opcional)</label>
+            <input id="p-device" placeholder="ej. /dev/ttyUSB0">
+        </div>
+        <div class="field">
             <label for="p-path">Ruta (opcional)</label>
             <input id="p-path" placeholder="dejar vacío para usar el default">
         </div>
@@ -122,11 +126,21 @@
 
 <script src="js/api.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/install-progress.js"></script>
 <script src="js/application.js"></script>
 <script src="js/project.js"></script>
 <script src="js/templates.js"></script>
 <script src="js/infrastructure.js"></script>
 <script src="app.js"></script>
+
+<!-- Barra de progreso de instalación -->
+<div id="install-bar" class="install-bar" hidden>
+    <span class="install-bar-label" id="install-bar-label">Instalando...</span>
+    <div class="install-bar-track">
+        <div class="install-bar-fill" id="install-bar-fill"></div>
+    </div>
+    <span class="install-bar-pct" id="install-bar-pct">0%</span>
+</div>
 
 </body>
 </html>

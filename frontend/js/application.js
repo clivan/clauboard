@@ -79,11 +79,28 @@ async function runAppAction(id, action) {
         uninstall: Api.uninstallApplication,
     };
 
+    // Para install: mostrar progreso SSE primero, luego ejecutar el install
+    if (action === "install") {
+
+        // Buscar el nombre de la app para mostrarlo en la barra
+        const apps = await Api.listApplications().catch(() => []);
+        const app = apps.find(a => a.id === id);
+        const appName = app ? (app.name || id) : id;
+
+        // Abrir SSE de progreso en paralelo con el install
+        InstallProgress.start(id, appName);
+    }
+
     try {
         await actionsMap[action](id);
         toast(`${id}: ${action} OK`, "ok");
     } catch (error) {
         toast(`${id}: fallo en ${action} — ${error.message}`, "error");
+    }
+
+    // Asegurarse de cerrar la barra si el install terminó
+    if (action === "install") {
+        InstallProgress.hide();
     }
 
     loadApplications();

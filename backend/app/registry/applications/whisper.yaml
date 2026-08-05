@@ -1,0 +1,27 @@
+id: whisper
+name: Whisper ASR
+description: >
+  Transcripción de audio a texto (speech-to-text) con API compatible con
+  OpenAI. Se integra con Open WebUI en Settings > Audio > STT Engine:
+  apunta a http://whisper:9000 con cualquier API key.
+
+type: service
+image: onerahmet/openai-whisper-asr-webservice:latest
+container_name: whisper
+restart: unless-stopped
+primary_port: 9000
+
+ports:
+  - host: 9000
+    container: 9000
+
+environment:
+  TZ: America/Mexico_City
+  ASR_MODEL: base
+  # Opciones: tiny, base, small, medium (small es el balance ideal para 6GB)
+  # tiny/base corren en CPU sin problema si quieres dejar la GPU libre
+
+labels:
+  clauboard.managed: "true"
+
+icon: whisper.svg

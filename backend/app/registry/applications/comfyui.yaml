@@ -1,0 +1,30 @@
+id: comfyui
+name: ComfyUI
+description: >
+  Generación de imágenes con Stable Diffusion (SD 1.5 cabe bien en 6GB VRAM,
+  SDXL con --lowvram). Se integra con Open WebUI — apunta a
+  http://comfyui:8188 en Settings > Image Generation.
+
+type: service
+image: ghcr.io/ai-dock/comfyui:latest-cuda
+container_name: comfyui
+restart: unless-stopped
+primary_port: 8188
+
+ports:
+  - host: 8188
+    container: 8188
+
+volumes:
+  - host: /home/claudio/clauboard-data/comfyui/models
+    container: /opt/ComfyUI/models
+  - host: /home/claudio/clauboard-data/comfyui/output
+    container: /opt/ComfyUI/output
+
+environment:
+  TZ: America/Mexico_City
+
+labels:
+  clauboard.managed: "true"
+
+icon: comfyui.svg
