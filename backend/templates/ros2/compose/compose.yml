@@ -1,18 +1,54 @@
+# Servicios independientes — comenta/quita el que no necesites.
+# Todos comparten red (network_mode: host) y ROS_DOMAIN_ID, así que
+# se descubren entre sí automáticamente sin configuración extra.
+
 services:
+
+  # Nodo principal — siempre presente
   ros2:
-    image: clauboard/ros2-realsense:humble
+    image: clauboard/ros2-base:humble
     container_name: ${PROJECT_NAME}-ros2
     network_mode: host
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - DISPLAY=${DISPLAY}
-      - QT_X11_NO_MITSHM=1
-    devices:
-      - ${DEVICE}:${DEVICE}
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - ../src:/workspace/src
       - ../build:/workspace/build
       - ../install:/workspace/install
     stdin_open: true
     tty: true
+
+  # Cámara RealSense — quita este bloque si no usas cámara
+  realsense-driver:
+    image: clauboard/ros2-realsense:humble
+    container_name: ${PROJECT_NAME}-realsense
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+    devices:
+      - ${DEVICE}:${DEVICE}
+    command: ros2 launch realsense2_camera rs_launch.py
+
+  # OpenCV — quita este bloque si tu nodo principal no necesita
+  # visión por computadora (antes venía forzado junto con realsense,
+  # ahora es independiente)
+  vision-processing:
+    image: clauboard/ros2-cv:humble
+    container_name: ${PROJECT_NAME}-cv
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+    volumes:
+      - ../src:/workspace/src
+
+  # Simulación — quita este bloque si no usas Gazebo
+  gazebo:
+    image: clauboard/ros2-gazebo:humble
+    container_name: ${PROJECT_NAME}-gazebo
+    network_mode: host
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - DISPLAY=${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ../worlds:/workspace/worlds 

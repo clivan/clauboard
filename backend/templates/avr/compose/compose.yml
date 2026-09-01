@@ -1,6 +1,6 @@
 services:
   avr:
-    image: lpodkalicki/avr-toolchain:latest
+    image: ${MICRO_IMAGE}
     container_name: ${PROJECT_NAME}-avr
     privileged: true
     volumes:

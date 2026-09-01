@@ -18,6 +18,11 @@ class CreateProjectRequest(BaseModel):
     # Si se especifica, sobreescribe el default del template en el .env.
     device: str | None = None
 
+    # Framework y arquitectura, solo relevantes para templates que los
+    # definen (ej. rpi-pico). Se ignoran silenciosamente en el resto.
+    framework: str | None = None
+    arch: str | None = None
+
 
 class CloneProjectRequest(BaseModel):
     """DTO para clonar un proyecto existente."""

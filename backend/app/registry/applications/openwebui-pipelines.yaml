@@ -1,0 +1,29 @@
+id: openwebui-pipelines
+name: Open WebUI Pipelines
+description: >
+  Framework de plugins para Open WebUI. Intercepta requests antes del LLM
+  para preprocesar documentos (MarkItDown), agregar lógica custom, etc.
+  Tras instalar, conectar en Open WebUI: Admin > Settings > Connections >
+  OpenAI API > URL: http://openwebui-pipelines:9099
+
+type: service
+image: ghcr.io/open-webui/pipelines:main
+container_name: openwebui-pipelines
+restart: unless-stopped
+primary_port: 9099
+
+ports:
+  - host: 9099
+    container: 9099
+
+volumes:
+  - host: /home/claudio/clauboard-data/pipelines
+    container: /app/pipelines
+
+environment:
+  TZ: America/Mexico_City
+
+labels:
+  clauboard.managed: "true"
+
+icon: pipelines.svg

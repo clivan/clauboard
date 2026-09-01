@@ -1,7 +1,7 @@
 services:
-  esp32:
+  rpi-pico:
     image: ${MICRO_IMAGE}
-    container_name: ${PROJECT_NAME}-esp32
+    container_name: ${PROJECT_NAME}-rpi-pico
     devices:
       - ${DEVICE}:${DEVICE}
     volumes:

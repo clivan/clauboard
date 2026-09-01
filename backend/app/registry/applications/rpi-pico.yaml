@@ -1,0 +1,32 @@
+id: rpi-pico
+
+name: Raspberry Pi Pico 2
+
+description: >
+  Toolchain para Raspberry Pi Pico 2 / Pico 2 W (RP2350). Elige framework
+  (bare metal, MicroPython, FreeRTOS o Zephyr) y arquitectura (ARM o
+  RISC-V, según el framework) al crear el proyecto. FreeRTOS y Zephyr
+  son templates básicos — funcionan pero no están tan pulidos como
+  bare metal/MicroPython.
+
+type: toolchain
+
+# 'image' queda vacío a propósito: la imagen real se resuelve en
+# tiempo de creación del proyecto según framework+arch elegidos
+# (ver framework_registry.py). No se instala como app suelta.
+image: clauboard/rpi-pico-baremetal-arm:latest
+
+container_name: rpi-pico-devenv
+
+restart: "no"
+
+devices:
+  - /dev/ttyACM0:/dev/ttyACM0
+
+environment:
+  TZ: America/Mexico_City
+
+labels:
+  clauboard.managed: "true"
+
+icon: rpi-pico.svg
