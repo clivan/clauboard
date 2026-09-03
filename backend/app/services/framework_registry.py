@@ -3,9 +3,10 @@
 # (no es un framework por sí solo — es una librería que se compila
 # junto con FreeRTOS o Zephyr existentes).
 #
-# micro-ROS NO soporta AVR (8-bit, insuficiente). NO se puede combinar
-# con MicroPython ni bare metal puro (es una librería en C que necesita
-# un RTOS/scheduler de base para sus tareas internas).
+# micro-ROS NO soporta AVR ni MSP430 (8/16-bit, insuficiente e
+# incompatibles con su stack). NO se puede combinar con MicroPython
+# ni bare metal puro (es una librería en C que necesita un
+# RTOS/scheduler de base para sus tareas internas).
 
 FRAMEWORK_CHOICES = {
 
@@ -22,6 +23,25 @@ FRAMEWORK_CHOICES = {
             "default_arch": "avr",
             "microros": False,  # AVR no soportado por micro-ROS
         },
+    },
+
+    "msp430": {
+        "baremetal": {
+            "label": "Bare metal (msp430-elf-gcc)",
+            "archs": ["msp430"],
+            "default_arch": "msp430",
+            "microros": False,
+        },
+        "freertos": {
+            "label": "FreeRTOS",
+            "archs": ["msp430"],
+            "default_arch": "msp430",
+            "microros": False,  # MSP430 no soportado por micro-ROS
+        },
+        # Sin zephyr: excluido explícitamente de la matriz de soporte
+        # oficial de Zephyr (issue #87751 del propio proyecto).
+        # Sin micropython: no está entre los puertos oficiales
+        # (arquitectura de 16-bit distinta a los que sí soporta).
     },
 
     "stm32": {

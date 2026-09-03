@@ -6,7 +6,13 @@ const DEVICE_DEFAULTS = {
     "rpi-pico": "/dev/ttyACM0",
 };
 
-const ARCH_LABELS = { arm: "ARM (Cortex-M)", riscv: "RISC-V (Hazard3)" };
+const ARCH_LABELS = {
+    arm: "ARM (Cortex-M)",
+    riscv: "RISC-V (Hazard3)",
+    avr: "AVR",
+    msp430: "MSP430",
+    xtensa: "Xtensa",
+};
 
 async function populateTemplateSelect() {
 
@@ -74,6 +80,7 @@ async function updateFrameworkFields(templateId) {
         archField.hidden = true;
         frameworkSelect.innerHTML = "";
         archSelect.innerHTML = "";
+        updateMicrorosField(null);
         return;
     }
 
@@ -88,8 +95,12 @@ async function updateFrameworkFields(templateId) {
     }
 
     updateArchField(frameworks, frameworkSelect.value);
+    updateMicrorosField(frameworks[frameworkSelect.value]);
 
-    frameworkSelect.onchange = () => updateArchField(frameworks, frameworkSelect.value);
+    frameworkSelect.onchange = () => {
+        updateArchField(frameworks, frameworkSelect.value);
+        updateMicrorosField(frameworks[frameworkSelect.value]);
+    };
 }
 
 function updateArchField(frameworks, frameworkId) {
@@ -114,6 +125,20 @@ function updateArchField(frameworks, frameworkId) {
         option.textContent = ARCH_LABELS[arch] || arch;
         if (arch === config.default_arch) option.selected = true;
         archSelect.appendChild(option);
+    }
+}
+
+function updateMicrorosField(frameworkConfig) {
+
+    const microrosField = document.getElementById("p-microros-field");
+    const microrosCheckbox = document.getElementById("p-microros");
+
+    const supported = !!(frameworkConfig && frameworkConfig.microros);
+
+    microrosField.hidden = !supported;
+
+    if (!supported) {
+        microrosCheckbox.checked = false;
     }
 }
 
@@ -152,6 +177,7 @@ function initProjectForm() {
         const device    = document.getElementById("p-device").value.trim();
         const framework = document.getElementById("p-framework").value;
         const arch      = document.getElementById("p-arch").value;
+        const microros  = document.getElementById("p-microros").checked;
 
         const payload = {
             id:          document.getElementById("p-id").value.trim(),
@@ -164,6 +190,7 @@ function initProjectForm() {
         if (device)    payload.device    = device;
         if (framework) payload.framework = framework;
         if (arch)      payload.arch      = arch;
+        if (microros)  payload.microros  = true;
 
         try {
             await Api.createProject(payload);

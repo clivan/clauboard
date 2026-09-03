@@ -14,7 +14,7 @@ TEMPLATE_DEVICE_DEFAULTS = {
 # Templates cuya imagen depende de framework/arch elegidos (ver
 # framework_registry.py). El resto usa la imagen fija de su
 # compose.yml sin variable MICRO_IMAGE.
-TEMPLATES_WITH_FRAMEWORK = {"avr", "stm32", "esp32", "rpi-pico"}
+TEMPLATES_WITH_FRAMEWORK = {"avr", "msp430", "stm32", "esp32", "rpi-pico"}
 
 
 class EnvService:
@@ -26,6 +26,7 @@ class EnvService:
         device: str | None = None,
         framework: str | None = None,
         arch: str | None = None,
+        microros: bool = False,
     ) -> str:
 
         lines = [
@@ -46,7 +47,7 @@ class EnvService:
 
         if template in TEMPLATES_WITH_FRAMEWORK:
 
-            resolved_image = resolve_image(template, framework, arch)
+            resolved_image = resolve_image(template, framework, arch, microros)
 
             if resolved_image:
                 lines.append(f"MICRO_IMAGE={resolved_image}")
@@ -66,8 +67,11 @@ class EnvService:
         device: str | None = None,
         framework: str | None = None,
         arch: str | None = None,
+        microros: bool = False,
     ):
 
-        content = self.generate(project_id, template, device, framework, arch)
+        content = self.generate(
+            project_id, template, device, framework, arch, microros
+        )
 
         (Path(project_path) / ".env").write_text(content)

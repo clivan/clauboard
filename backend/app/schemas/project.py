@@ -19,9 +19,13 @@ class CreateProjectRequest(BaseModel):
     device: str | None = None
 
     # Framework y arquitectura, solo relevantes para templates que los
-    # definen (ej. rpi-pico). Se ignoran silenciosamente en el resto.
+    # definen (ej. rpi-pico, esp32). Se ignoran silenciosamente en el resto.
     framework: str | None = None
     arch: str | None = None
+
+    # Solo aplica si el framework elegido soporta micro-ROS (ver
+    # framework_registry.supports_microros). Se ignora si no aplica.
+    microros: bool = False
 
 
 class CloneProjectRequest(BaseModel):
