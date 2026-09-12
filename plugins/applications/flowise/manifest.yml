@@ -1,0 +1,6 @@
+id: flowise
+type: application
+name: Flowise
+container: flowise
+icon: workflow
+url: http://localhost:3002

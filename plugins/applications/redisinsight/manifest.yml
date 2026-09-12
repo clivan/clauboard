@@ -1,0 +1,6 @@
+id: redisinsight
+type: application
+name: RedisInsight
+container: redisinsight
+icon: database
+url: http://localhost:5540

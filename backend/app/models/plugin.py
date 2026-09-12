@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class Plugin(BaseModel):
     id: str
     type: str

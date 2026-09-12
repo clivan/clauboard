@@ -1,0 +1,6 @@
+id: webui
+type: application
+name: Open WebUI
+container: open-webui
+icon: chat
+url: http://localhost:3001

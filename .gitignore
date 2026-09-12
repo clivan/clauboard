@@ -16,6 +16,4 @@ projects/
 # los templates del backend (backend/templates/)
 clauboard-projects/*/templates/
 
-plugins/
-
 node_modules/

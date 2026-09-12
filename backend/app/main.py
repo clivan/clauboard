@@ -7,10 +7,8 @@ from app.api.projects import router as projects_router
 from app.api.agents import router as agents_router
 from app.api.templates import router as templates_router
 from app.api.infrastructure import router as infrastructure_router
-
 from app.services.docker_service import DockerService
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.utils.logger import logger
 
 logger.info("Clauboard iniciado")

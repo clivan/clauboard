@@ -1,0 +1,6 @@
+id: prometheus
+type: application
+name: Prometheus
+container: clauboard-prometheus
+icon: chart
+url: http://localhost:9090

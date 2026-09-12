@@ -4,7 +4,7 @@ Dashboard local para gestionar entornos de desarrollo dockerizados, con foco en 
 
 ## Idea central
 
-Cada proyecto es un workspace autocontenido con su propio `compose.yml` y `.env`. El dashboard permite inicializar proyectos a partir de templates (AVR, MSP430, STM32, ESP32, Pico, ROS2, etc.), encender y apagar entornos, e instalar aplicaciones de servicio (Node-RED, Ollama, Syncthing, etc.) sin tocar la terminal para el día a día.
+Cada proyecto es un workspace autocontenido con su propio `compose.yml` y `.env`. El dashboard permite inicializar proyectos a partir de templates (AVR, ESP32, ROS2, etc.), encender y apagar entornos, e instalar aplicaciones de servicio (Node-RED, Ollama, Syncthing, etc.) sin tocar la terminal para el día a día.
 
 El desarrollo del código sigue haciéndose en VS Code localmente — el contenedor solo se levanta cuando necesitas compilar, flashear o probar.
 
@@ -29,9 +29,8 @@ clauboard/
       schemas/      # DTOs de entrada/salida
       registry/
         applications/  # YAML de cada app/toolchain/infra
-        templates/     # Dockerfiles de imágenes propias (por combinación
-                        # chip+framework+arch, y ROS2/OpenCV)
-    templates/      # compose.yml por template de proyecto (se copia al crear)
+        templates/     # Dockerfiles de imágenes propias (ROS2, OpenCV)
+    templates/      # compose.yml por tipo de proyecto (se copia al crear)
   frontend/
     js/             # api.js, ui.js, project.js, application.js, etc.
   infra/            # compose.yml separado para las bases de datos
@@ -52,10 +51,11 @@ cp infra/.env.example infra/.env
 nano infra/.env          # completar contraseñas
 sudo scripts/create-data-dirs.sh
 
-# Construir las imágenes propias (tarda, especialmente Zephyr)
+# Construir las imágenes propias (tarda, especialmente Zephyr y OpenCV-CUDA)
 backend/app/registry/templates/build-all.sh
 backend/app/registry/templates/build-micro-images.sh
 backend/app/registry/templates/build-pico-images.sh
+docker build -t clauboard/opencv-cuda:latest ./backend/app/registry/templates/opencv-cuda
 
 # Cada vez (o solo la primera si Docker arranca automático)
 ./start.sh
@@ -63,20 +63,21 @@ backend/app/registry/templates/build-pico-images.sh
 
 Dashboard disponible en `http://clauboard.localhost`
 
-## Convenciones de arquitectura
-
-- **Managers** contienen lógica de negocio
-- **Services** realizan operaciones concretas
-- **Repositories** solo leen/escriben archivos, nunca lógica
-- **API** solo expone endpoints, nunca lógica
-
 ## Al crear un proyecto embebido
 
 El formulario de "Nuevo proyecto" pide, según el template elegido:
 - **Framework** (si aplica): bare metal, FreeRTOS, Zephyr, MicroPython — varía según qué soporta cada chip realmente (ver `docs/architecture.md`)
 - **Arquitectura** (si el framework tiene más de una): ARM, RISC-V, etc.
 - **micro-ROS** (checkbox, solo si la combinación framework+chip lo soporta)
+- **Servicios ROS2** (solo con template ROS2): cámara RealSense / visión OpenCV / simulación Gazebo, seleccionables
 - **Dispositivo** (`/dev/ttyUSB0`, etc.) — vacío por default en AVR/STM32 porque usan programadores USB genéricos, no un puerto serie fijo
+
+## Convenciones de arquitectura
+
+- **Managers** contienen lógica de negocio
+- **Services** realizan operaciones concretas
+- **Repositories** solo leen/escriben archivos, nunca lógica
+- **API** solo expone endpoints, nunca lógica
 
 ## Apps y entornos disponibles
 

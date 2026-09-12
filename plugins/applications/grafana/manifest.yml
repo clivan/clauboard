@@ -1,0 +1,6 @@
+id: grafana
+type: application
+name: Grafana
+container: clauboard-grafana
+icon: chart
+url: http://localhost:3000

@@ -4,10 +4,6 @@ from pathlib import Path
 # Estructura base común a todos los templates
 BASE_DIRS = ["compose", ".clauboard"]
 
-# Target de Makefile compartido por los templates C/C++ que soportan
-# dependencias externas vía git (AVR, MSP430, STM32). Lee deps.txt
-# (una URL de git por línea, líneas vacías y '#' se ignoran) y clona
-# cada repo a lib/<nombre> si no existe ya.
 DEPS_TARGET = (
     "deps:\n"
     "\t@mkdir -p lib\n"
@@ -21,8 +17,8 @@ DEPS_TARGET = (
     "\t\t\tif [ -d \"lib/$$name\" ]; then \\\n"
     "\t\t\t\techo \"lib/$$name ya existe, omitiendo\"; \\\n"
     "\t\t\telse \\\n"
-    "\t\t\t\techo \"Clonando $$name...\"; \\\n"
-    "\t\t\t\tgit clone --depth 1 \"$$url\" \"lib/$$name\"; \\\n"
+    "\t\t\t\techo \"Clonando $$name (con submódulos)...\"; \\\n"
+    "\t\t\t\tgit clone --depth 1 --recursive \"$$url\" \"lib/$$name\"; \\\n"
     "\t\t\tfi; \\\n"
     "\t\tdone < deps.txt; \\\n"
     "\telse \\\n"
@@ -37,34 +33,40 @@ DEPS_TXT_TEMPLATE = (
     "# Corre 'make deps' para clonarlas a lib/\n"
 )
 
-# launch.json de VS Code (extensión Cortex-Debug) para debug remoto
-# vía OpenOCD. Requiere: 1) 'make debug' corriendo en una terminal
-# (dentro del contenedor, puerto 3333 publicado en el compose.yml del
-# proyecto), 2) la extensión "Cortex-Debug" instalada en VS Code.
-STM32_LAUNCH_JSON = """{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug STM32 (OpenOCD remoto, puerto 3333)",
-            "type": "cortex-debug",
-            "request": "attach",
-            "servertype": "external",
-            "gdbTarget": "localhost:3333",
-            "cwd": "${workspaceFolder}",
-            "executable": "${workspaceFolder}/build/main.elf",
-            "showDevDebugOutput": "parsed"
-        }
-    ]
-}
-"""
+STM32_DEPS_TXT_TEMPLATE = (
+    "# HAL de STM32 -- descomenta la línea de tu familia y borra las\n"
+    "# demás. Ambos repos usan submódulos de git; 'make deps' ya\n"
+    "# clona con --recursive, no hace falta nada extra.\n"
+    "#\n"
+    "# STM32F103C8T6 (Blue Pill) -> familia F1\n"
+    "# https://github.com/STMicroelectronics/STM32CubeF1.git\n"
+    "#\n"
+    "# STM32F429I-DISC1 (Discovery) -> familia F4\n"
+    "# https://github.com/STMicroelectronics/STM32CubeF4.git\n"
+)
 
-# Templates C/C++ que soportan deps.txt + make deps (git como gestor
-# de dependencias simple). ESP32 y Pico quedan fuera: ESP-IDF ya trae
-# su propio gestor de componentes (idf_component.yml) y MicroPython
-# no aplica.
+MSP430_DEPS_TXT_TEMPLATE = (
+    "# MSP430 DriverLib (HAL de periféricos de TI) NO tiene un\n"
+    "# repositorio de git oficial -- TI lo distribuye vía MSPWare,\n"
+    "# un instalador descargable desde:\n"
+    "#   https://www.ti.com/tool/MSPDRIVERLIB\n"
+    "#\n"
+    "# Opciones:\n"
+    "# 1) Descargar MSPWare manualmente y copiar la carpeta\n"
+    "#    driverlib correspondiente a tu chip dentro de lib/ (no\n"
+    "#    se puede automatizar con 'make deps', no es un git clone)\n"
+    "# 2) Usar un fork de comunidad bajo tu propio criterio, ej:\n"
+    "#    https://github.com/chintal/msp430-driverlib.git\n"
+    "#    (no oficial, sin garantía de mantenimiento -- verifica que\n"
+    "#    cubra tu chip antes de confiar en él)\n"
+    "# 3) Programar por registros directo (sin DriverLib), como se\n"
+    "#    hace comúnmente con AVR -- msp430-elf-gcc + los headers de\n"
+    "#    CMSIS/device que ya trae el toolchain son suficientes para\n"
+    "#    proyectos simples.\n"
+)
+
 TEMPLATES_WITH_DEPS = {"avr", "msp430", "stm32"}
 
-# Estructura y archivos auxiliares por template
 TEMPLATE_CONFIG = {
     "avr": {
         "dirs": ["src", "include", "build", "lib"],
@@ -115,7 +117,11 @@ TEMPLATE_CONFIG = {
         "gitignore": "build/\nlib/\n*.elf\n*.hex\n*.bin\n*.map\n*.o\n*.a\n",
         "makefile": (
             "TOOLCHAIN = arm-none-eabi-gcc\n"
-            "MCU       = cortex-m4\n\n"
+            "MCU       = cortex-m4\n"
+            "# HAL: descomenta una línea en deps.txt según tu chip\n"
+            "# (F103C8T6 -> F1, F429I-DISC1 -> F4) y corre 'make deps'.\n"
+            "# Ajusta los -I de abajo a la ruta real dentro de lib/\n"
+            "# una vez clonado (varía por familia).\n\n"
             "build:\n\t$(TOOLCHAIN) -mcpu=$(MCU) -Ilib -Os "
             "-o build/main.elf src/main.c\n\n"
             "flash:\n\tst-flash write build/main.bin 0x8000000\n\n"
@@ -125,8 +131,8 @@ TEMPLATE_CONFIG = {
             "\t# En otra terminal (o en VS Code con F5 usando el\n"
             "\t# launch.json de .vscode/), GDB se conecta a\n"
             "\t# localhost:3333 mientras este proceso sigue vivo.\n"
-            "\t# Ajusta target/stm32f4x.cfg si tu chip es otra\n"
-            "\t# familia (stm32f1x.cfg, stm32l4x.cfg, etc.)\n\n"
+            "\t# Ajusta target/stm32f4x.cfg si tu chip es F1\n"
+            "\t# (target/stm32f1x.cfg) -- ej. el F103C8T6.\n\n"
             "clean:\n\trm -rf build/*\n\n"
             + DEPS_TARGET
         ),
@@ -168,20 +174,13 @@ DEFAULT_CONFIG = {
     "makefile": None,
 }
 
-
 class WorkspaceService:
-
     def initialize(self, project_path: Path, template: str = ""):
-
         project_path.mkdir(parents=True, exist_ok=True)
-
         config = TEMPLATE_CONFIG.get(template, DEFAULT_CONFIG)
-
-        # Carpetas base + específicas del template
         for d in BASE_DIRS + config["dirs"]:
             (project_path / d).mkdir(exist_ok=True)
 
-        # README
         readme = project_path / "README.md"
         if not readme.exists():
             readme.write_text(
@@ -195,27 +194,42 @@ class WorkspaceService:
                 "```\n"
             )
 
-        # .gitignore
         gitignore = project_path / ".gitignore"
         if not gitignore.exists() and config["gitignore"]:
             gitignore.write_text(config["gitignore"])
-
-        # Makefile (solo para toolchains que lo tienen)
         if config["makefile"]:
             makefile = project_path / "Makefile"
             if not makefile.exists():
                 makefile.write_text(config["makefile"])
-
-        # deps.txt (solo para templates con gestor de dependencias vía git)
         if template in TEMPLATES_WITH_DEPS:
             deps_file = project_path / "deps.txt"
             if not deps_file.exists():
-                deps_file.write_text(DEPS_TXT_TEMPLATE)
-
-        # .vscode/launch.json (debug remoto vía OpenOCD, solo STM32 por ahora)
+                if template == "stm32":
+                    content = STM32_DEPS_TXT_TEMPLATE
+                elif template == "msp430":
+                    content = MSP430_DEPS_TXT_TEMPLATE
+                else:
+                    content = DEPS_TXT_TEMPLATE
+                deps_file.write_text(content)
         if template == "stm32":
             vscode_dir = project_path / ".vscode"
             vscode_dir.mkdir(exist_ok=True)
             launch_json = vscode_dir / "launch.json"
             if not launch_json.exists():
-                launch_json.write_text(STM32_LAUNCH_JSON)
+                launch_json.write_text(
+                    "{\n"
+                    '    "version": "0.2.0",\n'
+                    '    "configurations": [\n'
+                    "        {\n"
+                    '            "name": "Debug STM32 (OpenOCD remoto, puerto 3333)",\n'
+                    '            "type": "cortex-debug",\n'
+                    '            "request": "attach",\n'
+                    '            "servertype": "external",\n'
+                    '            "gdbTarget": "localhost:3333",\n'
+                    '            "cwd": "${workspaceFolder}",\n'
+                    '            "executable": "${workspaceFolder}/build/main.elf",\n'
+                    '            "showDevDebugOutput": "parsed"\n'
+                    "        }\n"
+                    "    ]\n"
+                    "}\n"
+                )

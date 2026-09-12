@@ -6,7 +6,7 @@ description: Entorno standalone de OpenCV (sin ROS2) para visión por computador
 
 type: toolchain
 
-image: clauboard/opencv:latest
+image: clauboard/opencv-cuda:latest
 
 container_name: opencv-devenv
 

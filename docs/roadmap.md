@@ -2,10 +2,12 @@
 
 ## Estado general
 
-MVP funcional. Proyectos, aplicaciones, templates, infraestructura,
-mini-DNS, frameworks/RTOS por chip, IA local (Ollama/Open WebUI/
-Pipelines/ComfyUI/Whisper) — todo operativo. Lo que queda es deuda
-técnica identificada y features declaradas pero sin definir a fondo.
+MVP funcional y ampliamente extendido. Proyectos, aplicaciones,
+templates, infraestructura (incluyendo monitoreo), mini-DNS,
+frameworks/RTOS por chip, gestión de dependencias, debug remoto,
+IA local y externa (Ollama + Claude), y una imagen OpenCV completa
+con CUDA — todo operativo. Lo que queda es deuda técnica identificada
+y exploraciones registradas para otra sesión.
 
 ---
 
@@ -17,22 +19,26 @@ cambias de placa/puerto después, hay que editar el archivo a mano en
 el filesystem. Falta un endpoint que actualice variables puntuales
 del `.env` desde el dashboard, sin recrear el proyecto.
 
-### 2. Hub de agentes IA — ahora sí tiene sentido definirlo
-`GET /agents` sigue siendo un stub (`[]`). Se dejó pendiente
-originalmente por falta de infraestructura real — eso ya no aplica:
-hoy hay Ollama + Open WebUI + Pipelines corriendo. Definir qué es
-el "hub": ¿lista de modelos disponibles en Ollama? ¿links directos
-a cada modelo en Open WebUI? ¿registro de agentes con tools/roles
-específicos armados en Flowise? El modelo `Agent` y el endpoint ya
-existen esperando la decisión de alcance.
+### 2. Modo de solo lectura real para volúmenes (`VolumeMapping.mode`)
+Se necesitó montar el vault de Obsidian de solo lectura en Open WebUI
+y no fue posible con el esquema actual — `ContainerFactory` fuerza
+`mode: "rw"` en todos los volúmenes sin excepción, y el modelo
+`VolumeMapping` no tiene campo para especificar el modo. El intento
+de poner `:ro` dentro del string de `container` produce un error de
+Docker (`invalid volume specification`, modos duplicados). Mientras
+tanto, el vault quedó montado en modo lectura-escritura (funciona,
+pero sin la protección real). Requiere: agregar campo `mode` a
+`VolumeMapping` + que `ContainerFactory` lo respete en vez de
+hardcodear `rw`.
 
-### 3. Git automático al crear proyectos
-`GitService.init()` corre `git init` pero nunca hay un primer commit.
-Falta: commit automático de los archivos generados (`.env`,
-`compose.yml`, `Makefile`, `.gitignore`, `README.md`) al crear el
-proyecto. El remote (GitHub hoy, Gitea a futuro) se sigue
-configurando manualmente por proyecto — Clauboard no gestiona el
-remote, solo el repo local.
+### 3. Hub de agentes IA
+`GET /agents` sigue siendo un stub (`[]`). Ahora hay bastante más
+infraestructura real que antes (Ollama, Open WebUI, Claude
+conectado, Flowise) — sigue pendiente decidir qué significa el
+"hub": ¿lista de modelos disponibles? ¿links a UIs? ¿registro de
+agentes armados en Flowise/LangGraph? Ver también la exploración de
+frameworks de agentes (LangChain/LangGraph/Flowise/OpenCode),
+documentada aparte, que probablemente informe esta decisión.
 
 ---
 
@@ -41,42 +47,51 @@ remote, solo el repo local.
 ### Migración de DockerService a DockerComposeService
 Las apps tipo `service` usan el SDK de Python (`DockerService`), los
 proyectos usan el CLI (`DockerComposeService`). Pausado a propósito
-("dejar el 3 fuera por ahora") — no bloquea nada hoy, pero implica
-mantener dos rutas de código para gestionar contenedores. Revisar
-cuando el mantenimiento doble empiece a doler de verdad.
+— no bloquea nada hoy, pero implica mantener dos rutas de código
+para gestionar contenedores.
 
 ### Automatización de bases de datos por proyecto
 El campo `requires_db` en el modelo `Application` existe pero no se
-usa. Cuando un template lo declare, `ApplicationManager` debería
-crear automáticamente la base de datos/usuario/permisos en el motor
-correspondiente. Hoy es manual (ver `infra/postgres/init/README.md`).
+usa. Hoy es manual (ver `infra/postgres/init/README.md`).
+
+### Reindexación automática de Knowledge Bases
+Cada vez que se reinstala Open WebUI, la configuración de Embedding
+Model se resetea al default (`sentence-transformers`), y cualquier
+Knowledge Base ya indexada necesita **Reindex** manual tras
+reconfigurar. Es un paso fácil de olvidar — vale la pena documentarlo
+de forma más visible o, a futuro, automatizarlo si Open WebUI expone
+un endpoint para eso.
+
+### Variante ARM64/L4T de `opencv-cuda` para Jetson
+La imagen `opencv-cuda` construida es x86_64 únicamente (para la
+RTX 3050 de la laptop). Para usarla en la Jetson del homelab hace
+falta una imagen distinta basada en JetPack/L4T — CUDA de escritorio
+y CUDA de Jetson no son intercambiables.
 
 ---
 
 ## Pendiente — prioridad baja / exploratorio
 
 ### Marketplace de templates de terceros
-Hoy todos los templates son locales. Eventualmente: índice remoto
-de templates compatibles con el formato de Clauboard, instalables
-con un click.
+Índice remoto de templates compatibles con el formato de Clauboard,
+instalables con un click. No iniciado.
 
-### Debugging real con GDB
-STM32 ya tiene `openocd`+`stlink-tools` instalados en sus imágenes
-— el debug con breakpoints ya es técnicamente posible, solo falta
-documentar/exponer el flujo (hoy solo se usa para flashear).
+### Debugging con GDB para otros chips además de STM32
+El patrón (OpenOCD + puertos publicados + `launch.json` de
+Cortex-Debug) ya está resuelto para STM32. Extender a ESP32 (que
+también soporta OpenCV/JTAG) no se ha evaluado.
 
 ### Testing unitario sin hardware
 Zephyr (`native_sim`) y Pico SDK soportan compilar/correr pruebas
-en la laptop sin la placa conectada. Útil para CI o iterar lógica
-pura rápido. No evaluado en profundidad todavía.
+en la laptop sin la placa conectada. No evaluado en profundidad.
 
-### Proyecto separado: micro-tools
-Calculadoras standalone (fuses AVR, baudrate UART por arquitectura,
-PLL STM32, PWM ESP32/Pico, bit field visualizer, utilidades de
-electrónica general). Decidido explícitamente como **proyecto aparte**,
-no como pestaña de Clauboard — ver `micro_tools_contexto.md` en el
-chat correspondiente para el detalle completo (fórmulas verificadas,
-estructura de archivos, por qué no ImHex).
+### Checkbox de componentes opcionales para OpenCV (contrib/CUDA)
+Se consideró el mismo patrón de framework/arch (como en los micros)
+para elegir entre OpenCV core / contrib / CUDA al crear el proyecto,
+pero se descartó: se prefirió una sola imagen completa (`opencv-cuda`,
+con todo incluido) construida una vez, en vez de variantes
+seleccionables — más simple de mantener, evita repetir el patrón de
+"dependencias descubiertas una por una" que costó tiempo con Zephyr.
 
 ---
 
@@ -87,33 +102,14 @@ estructura de archivos, por qué no ImHex).
 - **Sin terminal en el navegador** — los toolchains se usan desde la terminal local del host (`docker compose run --rm`, comando copiable desde el dashboard)
 - **Sin MQTT Panel** — Serial Studio/TSMaster cubren el monitoreo serial y MQTT mejor
 - **Sin Kokoro TTS / sin voz** — no hacía falta para el caso de uso real
+- **Sin n8n en Clauboard** — ya existe en el homelab; duplicarlo localmente solo se justificaría para prototipar flujos antes de moverlos ahí (caso concreto: biblioteca personal, Etapa 2), no como instancia permanente paralela
 - **Gazebo nativo** — se instala en el host, no en contenedor (rendimiento/GPU/X11)
 - **Basys2 FPGA excluido** — Xilinx ISE tiene licencia propietaria, no hay imagen redistribuible legalmente
 - **Sin plugins de "acción"** (ej. flashear desde un botón) — herramientas dedicadas ya cubren el caso mejor
 - **`restart: unless-stopped`** en todos los contenedores del stack principal e infra — para sobrevivir reinicios de laptop sin `docker compose down`
-- **ROS2 con servicios independientes**, no en cadena de herencia — cada imagen (`ros2-cv`, `ros2-realsense`, `ros2-gazebo`) parte directo de `ros2-base`, se combinan como servicios de compose según lo que el proyecto necesite, no como capas forzadas
-- **Framework/RTOS por chip, no checkboxes de componentes** — la composición de piezas de un toolchain se resuelve en build-time (una imagen por combinación) o en servicios de compose separados, nunca generando Dockerfiles dinámicamente en runtime
+- **ROS2 con servicios independientes**, seleccionables al crear el proyecto vía checkboxes — no en cadena de herencia de imágenes ni forzados todos juntos
+- **Framework/RTOS por chip, no checkboxes de componentes en runtime** — la composición de piezas de un toolchain se resuelve en build-time (una imagen por combinación) o en servicios de compose separados, nunca generando Dockerfiles dinámicamente
 - **micro-ROS como checkbox combinable**, no como framework más — es una librería que se agrega a FreeRTOS/Zephyr existentes, no una alternativa a ellos
 - **AVR y STM32 sin dispositivo fijo por default** — usan programadores USB genéricos (USBasp, ST-Link), no un puerto serie predecible; el contenedor corre `privileged: true` en su lugar
-
----
-
-## Sprints / sesiones completadas
-
-| Sesión | Contenido |
-|---|---|
-| 0-1 | API base, arquitectura, workspace, repositories |
-| 2 | Corrección de errores del scaffold inicial |
-| 3 | DockerComposeService (up/down/restart/logs/status por proyecto) |
-| 4 | Frontend HUD cyberpunk (4 pestañas, cards con LED de status) |
-| 5 | Templates embebidos (AVR/MSP430/STM32/ESP32/Yocto/ROS2/OpenCV) |
-| 6 | Infraestructura compartida separada (Postgres/Mongo/InfluxDB/Redis/MinIO/Mosquitto/Grafana) |
-| 7 | Plugins (manifest + botón "Abrir ↗" cuando status=running) |
-| 8 | Agentes IA declarados (stub) |
-| 9 | Mini-DNS nginx, imágenes ROS2 propias, catálogo de aplicaciones extendido |
-| 10 | Ciclo de vida toolchain desde dashboard (botón Shell), device dinámico en formulario |
-| 11 | Clonar proyectos, LED de estado en cards de proyecto |
-| 12 | Barra de progreso de instalación (SSE), ComfyUI, Whisper |
-| 13 | Open WebUI: RAG con vault de Obsidian, Pipelines + MarkItDown |
-| 14 | Framework/arch/microros por chip (AVR/MSP430/STM32/ESP32/Pico), ROS2 achatado a servicios independientes |
-| 15 | Auditoría del repo (import roto, huecos de código), fixes, Makefiles con variable `DEVICE` |
+- **OpenCV: una sola imagen completa (`opencv-cuda`) en vez de variantes seleccionables** — mismo espíritu que la decisión de ROS2/micro-ROS, pero aquí se prefirió simplicidad de mantenimiento sobre flexibilidad de selección, porque contrib/CUDA no son "servicios" sino capacidades de la misma imagen
+- **Grafana clasificado como `service`, no `infrastructure`** — el criterio de clasificación es "¿tiene UI que se visita?", no "¿dónde se define el contenedor?"

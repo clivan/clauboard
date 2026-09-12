@@ -4,12 +4,9 @@ services:
     container_name: ${PROJECT_NAME}-stm32
     privileged: true
     ports:
-      # OpenOCD expone el puerto de GDB remoto aquí. VS Code
-      # (Cortex-Debug, corriendo en tu host) se conecta a
-      # localhost:3333 mientras OpenOCD corre dentro del contenedor.
+      # Puerto de  OpenOCD para el GDB remoro.
       - "3333:3333"
-      # Puerto de telnet de OpenOCD, útil para comandos manuales
-      # (ej. 'reset halt') sin pasar por GDB.
+      # Puerto de telnet de OpenOCD
       - "4444:4444"
     volumes:
       - ../src:/workspace/src

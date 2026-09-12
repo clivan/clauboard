@@ -1,0 +1,6 @@
+id: mongo-express
+type: application
+name: Mongo Express
+container: mongo-express
+icon: database
+url: http://localhost:8084

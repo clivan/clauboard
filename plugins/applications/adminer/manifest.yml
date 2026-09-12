@@ -1,0 +1,6 @@
+id: adminer
+type: application
+name: Adminer
+container: adminer
+icon: database
+url: http://localhost:8083

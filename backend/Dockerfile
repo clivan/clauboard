@@ -2,7 +2,6 @@ FROM python:3.12-slim
 
 WORKDIR /workspace
 
-# Docker CLI + compose plugin + git
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \

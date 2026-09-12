@@ -1,0 +1,6 @@
+id: espconnect
+type: application
+name: ESPConnect
+container: espconnect
+icon: cpu
+url: http://localhost:8090

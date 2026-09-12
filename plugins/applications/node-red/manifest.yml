@@ -1,0 +1,6 @@
+id: node-red
+type: application
+name: Node-RED
+container: node-red
+icon: workflow
+url: http://localhost:1880

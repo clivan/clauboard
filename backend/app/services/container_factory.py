@@ -1,12 +1,9 @@
 from app.models.application import Application
 from app.models.application_type import ApplicationType
 
-
 class ContainerFactory:
-
     @staticmethod
     def build(app: Application):
-
         if app.type == ApplicationType.TOOLCHAIN:
             raise ValueError(
                 f"'{app.id}' es type=toolchain: no se maneja como "
@@ -15,16 +12,11 @@ class ContainerFactory:
                 "ejecutan con 'docker compose run --rm' — todavía no "
                 "implementado (pendiente)."
             )
-
         ports = {}
-
         for p in app.ports:
             ports[f"{p.container}/{p.protocol}"] = p.host
-
         volumes = {}
-
         for v in app.volumes:
-
             if v.host.startswith("~"):
                 raise ValueError(
                     f"Ruta de volumen inválida '{v.host}': '~' no se "
@@ -37,27 +29,17 @@ class ContainerFactory:
                 "bind": v.container,
                 "mode": "rw"
             }
-
         config = {
-
             "image": app.image,
-
             "name": app.container_name,
-
             "detach": True,
-
             "restart_policy": {
                 "Name": app.restart
             },
-
             "network": "clauboard-net",
-
             "ports": ports,
-
             "volumes": volumes,
-
             "environment": app.environment,
-
             "labels": app.labels,
         }
 

@@ -1,20 +1,16 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import json
-
 from app.managers.application_manager import ApplicationManager
 from app.models.application_type import ApplicationType
 
 router = APIRouter(prefix="/applications", tags=["Applications"])
-
 manager = ApplicationManager()
-
 
 @router.get("")
 def list_applications():
 
     return manager.list(type_filter=ApplicationType.SERVICE)
-
 
 @router.get("/{app_id}")
 def get_application(app_id: str):
@@ -26,7 +22,6 @@ def get_application(app_id: str):
 
     return app
 
-
 @router.get("/{app_id}/install/progress")
 def install_progress(app_id: str):
     """
@@ -34,7 +29,6 @@ def install_progress(app_id: str):
     El cliente abre un EventSource a este endpoint antes de llamar
     a POST /install — recibe eventos mientras Docker descarga las capas.
     """
-
     app = manager.registry.get_application(app_id)
 
     if app is None:
@@ -58,16 +52,13 @@ def install_progress(app_id: str):
         }
     )
 
-
 @router.get("")
 def list_applications():
 
     return manager.list(type_filter=ApplicationType.SERVICE)
 
-
 @router.get("/{app_id}")
 def get_application(app_id: str):
-
     app = manager.get(app_id)
 
     if app is None:
@@ -75,10 +66,8 @@ def get_application(app_id: str):
 
     return app
 
-
 @router.post("/{app_id}/install")
 def install(app_id: str):
-
     try:
         installed = manager.install(app_id)
 
@@ -92,7 +81,6 @@ def install(app_id: str):
         raise HTTPException(404)
 
     return {"status": "installed"}
-
 
 @router.post("/{app_id}/start")
 def start(app_id: str):
@@ -108,10 +96,8 @@ def start(app_id: str):
 
     return {"status": "running"}
 
-
 @router.post("/{app_id}/stop")
 def stop(app_id: str):
-
     try:
         stopped = manager.stop(app_id)
 
@@ -123,10 +109,8 @@ def stop(app_id: str):
 
     return {"status": "stopped"}
 
-
 @router.post("/{app_id}/restart")
 def restart(app_id: str):
-
     try:
         restarted = manager.restart(app_id)
 
@@ -138,10 +122,8 @@ def restart(app_id: str):
 
     return {"status": "restarted"}
 
-
 @router.delete("/{app_id}")
 def uninstall(app_id: str):
-
     try:
         removed = manager.uninstall(app_id)
 
