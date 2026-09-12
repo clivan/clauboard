@@ -1,0 +1,7 @@
+id: cadvisor
+name: cAdvisor
+description: Métricas de CPU/RAM/red por contenedor Docker — scrapeado por Prometheus
+type: infrastructure
+image: gcr.io/cadvisor/cadvisor:latest
+container_name: clauboard-cadvisor
+restart: unless-stopped

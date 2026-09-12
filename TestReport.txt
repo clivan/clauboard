@@ -1,0 +1,79 @@
+0.1. start.sh levanta sin errores
+0.2. docker ps muestra clauboard-forntend, clauboard-backend, postgres:16-alpine, redis:7-alpine, eclipse-mosquitto:2, mongo:7, influxdb:2, grafana/grafana:latest, minio/minio:latest, nginx:alpine
+0.3. el dashboard carga sin error de consola
+0.4. Las 4 pestañas cargan sin quedarse en blanco.
+
+1.1. Los 7 servicios aparecen en la pestaña infraestructura.
+1.2. Cada uno muestra LED de estado correcto.
+1.3. Start/stop desde el dashboard funciona en los 7 servicios.
+1.4. No hay botón de instalar/desinstalar visible para infraestructura.
+
+2.1. Al instalar apps, la barra de progreso aparece y desaparece rápido.
+2.2. Al instalar Ollama la barra de progreso muestra mb reales.
+2.3. Start/stop/Restart en las apps instaladas. LED cambia de color correctamente.
+2.4. NA
+2.5. NA
+
+3.1. Los 5 chips más ROS2/OpenCV/Yocto aparecen listados.
+3.2 Ninguno muestra botón de instalar.
+
+4.1. AVR
+4.2. MSP430
+4.3. STM32
+4.4. ESP32
+4.5. RPi Pico
+4.6. Crea un proyecto con ruta personalizada
+4.7. La estructura corresponde al template.
+4.8. El .env trae MICRO?IMAGE
+4.9 compose/comppose.yml existe y no está vacío
+4.10. .git existe
+4.11. Para AVR/MSP430/STM32 deps.txt existe con el comentario de ejemplo.
+
+5.1. Botón Up
+5.2. Botón logs.
+5.3. Botón shell.
+5.4. Botón down
+5.5. Botón restart.
+5.6. ROS2.
+
+6.1. Clona proyecto
+6.2. El proyecto clonado aparece con status/no_comppose/stopped
+6.3. La carpeta clonada tiene todos los archivos del original.
+6.4. .git del clon es un historial nuevo
+6.5. Intenca clonar un ID que ya existe.
+
+7.1. Elimina un proyecto.
+7.2. Elimina un proyecto que tiene contenedores corriendo.
+
+8.1. Flujo de compilación real.
+8.2. make flash
+8.3. exit y confirmar que el puerto USB queda libre
+
+9.1. Agrega una URL de git real a deps.txt
+9.2. make deps
+9.3. make deps x2
+9.4. lib/ no aparece en git status
+9.5. make build compilación
+
+10.1. compose.yml STM32
+10.2. make debug.
+10.3. launch.json existe
+10.4. Cortex-Debug.
+10.5. F5 conecta exitosamente
+10.6. target/stm32f4x.cfg
+
+11.1. Ollama instalado y corriendo
+11.2. WebUI
+11.3. qwen2.5-coder:3b
+11.4. Adjuntar archivo al chat
+11.5. Obsidian.
+
+12.1. Apps resuelven sin error de nginx
+12.2. docker exec clauboard-proxy nginx -t
+
+13.1. Crear un proyecto con un id que ya existe
+13.2. instalar toolchain desde curl
+13.3. Apagar docker a medio proceso
+
+
+

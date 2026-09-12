@@ -8,9 +8,11 @@ ENV PICO_TOOLCHAIN_PATH=/opt/riscv/riscv-toolchain-14
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
+        ca-certificates \
         cmake \
         build-essential \
         python3 \
+        python3-dev \
         curl \
         picotool \
     && rm -rf /var/lib/apt/lists/*

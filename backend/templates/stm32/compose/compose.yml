@@ -1,9 +1,16 @@
 services:
-  esp32:
+  stm32:
     image: ${MICRO_IMAGE}
-    container_name: ${PROJECT_NAME}-esp32
-    devices:
-      - ${DEVICE}:${DEVICE}
+    container_name: ${PROJECT_NAME}-stm32
+    privileged: true
+    ports:
+      # OpenOCD expone el puerto de GDB remoto aquí. VS Code
+      # (Cortex-Debug, corriendo en tu host) se conecta a
+      # localhost:3333 mientras OpenOCD corre dentro del contenedor.
+      - "3333:3333"
+      # Puerto de telnet de OpenOCD, útil para comandos manuales
+      # (ej. 'reset halt') sin pasar por GDB.
+      - "4444:4444"
     volumes:
       - ../src:/workspace/src
     working_dir: /workspace/src

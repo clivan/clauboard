@@ -7,6 +7,7 @@ ENV PICO_SDK_PATH=/opt/pico-sdk
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
+        ca-certificates \
         cmake \
         build-essential \
         gcc-arm-none-eabi \
@@ -14,6 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libstdc++-arm-none-eabi-newlib \
         python3 \
         python3-pip \
+        python3-dev \
         pkg-config \
         libffi-dev \
         picotool \

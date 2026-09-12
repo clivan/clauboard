@@ -5,6 +5,7 @@ FROM espressif/idf:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
+        ca-certificates \
         make \
     && rm -rf /var/lib/apt/lists/*
 

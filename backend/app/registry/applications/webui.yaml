@@ -28,10 +28,8 @@ volumes:
   - host: /home/claudio/clauboard-data/open-webui
     container: /app/backend/data
 
-  # Ajusta esta ruta a donde vive tu vault real de Obsidian.
-  # :ro = solo lectura, Open WebUI nunca escribe en tu vault.
-  - host: /home/claudio/Documentos/MiVaultObsidian
-    container: /data/obsidian-vault:ro
+  - host: /home/claudio/Clivan
+    container: /data/obsidian-vault
 
 environment:
 

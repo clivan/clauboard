@@ -27,6 +27,12 @@ class CreateProjectRequest(BaseModel):
     # framework_registry.supports_microros). Se ignora si no aplica.
     microros: bool = False
 
+    # Solo para template=ros2: qué servicios opcionales incluir en el
+    # compose.yml generado, además del nodo base ('ros2', siempre
+    # presente). Valores válidos: "realsense-driver",
+    # "vision-processing", "gazebo". None o [] = solo el nodo base.
+    ros2_services: list[str] | None = None
+
 
 class CloneProjectRequest(BaseModel):
     """DTO para clonar un proyecto existente."""

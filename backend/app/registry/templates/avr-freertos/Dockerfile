@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         avrdude \
         make \
         git \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth 1 \

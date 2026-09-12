@@ -8,6 +8,7 @@ ENV PICO_PLATFORM=rp2350-arm-s
  
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
+        ca-certificates \
         cmake \
         build-essential \
         gcc-arm-none-eabi \

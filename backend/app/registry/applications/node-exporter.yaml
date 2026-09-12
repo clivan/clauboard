@@ -1,0 +1,7 @@
+id: node-exporter
+name: Node Exporter
+description: Métricas del host (laptop) — CPU/disco/temperatura, scrapeado por Prometheus
+type: infrastructure
+image: prom/node-exporter:latest
+container_name: clauboard-node-exporter
+restart: unless-stopped

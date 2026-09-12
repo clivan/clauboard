@@ -21,9 +21,6 @@ docker build -t clauboard/stm32-zephyr:latest ./stm32-zephyr
 echo "==> STM32 MicroPython"
 docker build -t clauboard/stm32-micropython:latest ./stm32-micropython
 
-echo "==> ESP32 bare metal"
-docker build -t clauboard/esp32-baremetal:latest ./esp32-baremetal
-
 echo "==> ESP32 FreeRTOS (misma imagen que bare metal, ver nota en su Dockerfile)"
 docker build -t clauboard/esp32-freertos:latest ./esp32-freertos
 

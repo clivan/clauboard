@@ -29,6 +29,7 @@ const Api = {
     listApplications: () => apiRequest("/applications"),
     listPlugins: () => apiRequest("/plugins"),
     listTemplates: () => apiRequest("/templates"),
+    getTemplateFrameworks: (id) => apiRequest(`/templates/${id}/frameworks`),
     listInfrastructure: () => apiRequest("/infrastructure"),
     installApplication: (id) => apiRequest(`/applications/${id}/install`, { method: "POST" }),
     startApplication: (id) => apiRequest(`/applications/${id}/start`, { method: "POST" }),

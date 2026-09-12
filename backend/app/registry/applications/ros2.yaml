@@ -1,0 +1,28 @@
+id: ros2
+
+name: ROS2 DevEnv
+
+description: >
+  Toolchain ROS2 Humble. Al crear el proyecto se genera un compose.yml
+  con 4 servicios independientes (ros2, realsense-driver,
+  vision-processing, gazebo) — comenta/quita el que no necesites,
+  no vienen forzados en cadena. Ver docs/architecture.md.
+
+type: toolchain
+
+image: clauboard/ros2-base:humble
+
+container_name: ros2-devenv
+
+restart: "no"
+
+devices:
+  - /dev/video0:/dev/video0
+
+environment:
+  TZ: America/Mexico_City
+
+labels:
+  clauboard.managed: "true"
+
+icon: ros2.svg

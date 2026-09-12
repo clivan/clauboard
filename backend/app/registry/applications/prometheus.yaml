@@ -1,0 +1,7 @@
+id: prometheus
+name: Prometheus
+description: Recolector de métricas (scrape) — fuente de datos para Grafana
+type: infrastructure
+image: prom/prometheus:latest
+container_name: clauboard-prometheus
+restart: unless-stopped

@@ -57,6 +57,23 @@
                 Habilitar micro-ROS
             </label>
         </div>
+        <div class="field" id="p-ros2-services-field" hidden>
+            <label>Servicios ROS2 adicionales</label>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+                <label style="display:flex;align-items:center;gap:6px;font-weight:normal;text-transform:none;">
+                    <input type="checkbox" id="p-ros2-realsense" style="width:auto;">
+                    Cámara RealSense
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:normal;text-transform:none;">
+                    <input type="checkbox" id="p-ros2-cv" style="width:auto;">
+                    Visión (OpenCV)
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:normal;text-transform:none;">
+                    <input type="checkbox" id="p-ros2-gazebo" style="width:auto;">
+                    Simulación (Gazebo)
+                </label>
+            </div>
+        </div>
         <div class="field">
             <label for="p-device">Dispositivo (opcional)</label>
             <input id="p-device" placeholder="ej. /dev/ttyUSB0">

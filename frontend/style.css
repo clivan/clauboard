@@ -198,6 +198,7 @@ body {
 .form-panel[hidden] { display: none; }
 
 .field { display: flex; flex-direction: column; gap: 4px; }
+.field[hidden] { display: none; }
 .field label { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
 .field input, .field select {

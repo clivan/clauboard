@@ -17,7 +17,7 @@ ports:
 
 environment:
   TZ: America/Mexico_City
-  ASR_MODEL: base
+  ASR_MODEL: small
   # Opciones: tiny, base, small, medium (small es el balance ideal para 6GB)
   # tiny/base corren en CPU sin problema si quieres dejar la GPU libre
 

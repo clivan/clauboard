@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         make \
         cmake \
         git \
+        ca-certificates \
         stlink-tools \
         openocd \
     && rm -rf /var/lib/apt/lists/*

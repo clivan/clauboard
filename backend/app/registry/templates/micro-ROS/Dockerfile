@@ -5,6 +5,7 @@ FROM espressif/idf:latest
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # El componente micro-ROS para ESP-IDF se agrega como un componente
