@@ -1,4 +1,3 @@
-// Defaults de device por template (mismos que EnvService en el backend)
 const DEVICE_DEFAULTS = {
     msp430: "/dev/ttyACM0",
     esp32:  "/dev/ttyUSB0",
@@ -13,10 +12,6 @@ const ARCH_LABELS = {
     msp430: "MSP430",
     xtensa: "Xtensa",
 };
-
-// ============================================================
-// Listado y cards de proyectos
-// ============================================================
 
 async function loadProjects() {
 
@@ -365,9 +360,6 @@ function initProjectForm() {
     });
 }
 
-// ============================================================
-// Modal de clonar proyecto
-// ============================================================
 
 let _cloneSourceId = null;
 

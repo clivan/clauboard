@@ -41,7 +41,6 @@ services:
     volumes:
       - ../src:/workspace/src
 
-  # Simulación — quita este bloque si no usas Gazebo
   gazebo:
     image: clauboard/ros2-gazebo:humble
     container_name: ${PROJECT_NAME}-gazebo
